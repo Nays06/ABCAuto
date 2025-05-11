@@ -1,0 +1,76 @@
+<div
+  style="
+    width: 98%;
+    border-radius: 25px;
+    margin: 0 auto;
+    overflow: hidden;
+    display: none;
+  "
+>
+  <app-video-slider />
+</div>
+
+<div class="filter" style="display: none;">
+  <div class="brands">
+    <div *ngFor="let brand of brands">
+      <img [src]="brand.img" [alt]="brand.title" />
+      <span>{{ brand.title }}</span>
+    </div>
+  </div>
+
+  <div class="specifications">
+    <div class="specifications-title">Быстрый подбор авто</div>
+    <div class="specifications-price">
+        <h4>Цена</h4>
+        <div>
+            <div>
+                <span>От</span>
+                <input type="number" max="9">
+            </div>
+            <div>
+                <span>До</span>
+                <input type="number" max="9">
+            </div>
+        </div>
+    </div>
+    <div class="specifications-additionals">
+        <select name="" id="">
+            <option value="" disabled selected hidden>Тип кузова</option>
+            <option value="">Яблоко</option>
+            <option value="">Банан</option>
+            <option value="">Груша</option>
+        </select>
+        <select name="" id="">
+            <option value="" disabled selected hidden>Коробка</option>
+            <option value="">Яблоко</option>
+            <option value="">Банан</option>
+            <option value="">Груша</option>
+        </select>
+    </div>
+
+    <button>Показать</button>
+  </div>
+</div>
+
+<!-- <div *ngFor="let car of cars" style="margin-top: 20px;">
+  <h1>{{ car.brand }} {{ car.model }}</h1>
+  <div style="display: grid; width: 100%; grid-template-columns: repeat(10, 150px);">
+    <img *ngFor="let img of car.images; let $index" [src]="img" alt="car" width="150" [title]="$index">
+  </div>
+</div> -->
+
+<app-car-card 
+  [carImages]="[
+      'https://di-uploads-pod7.dealerinspire.com/toyotachulavista/uploads/2022/11/2023_Toyota_Camry_exterior_side_white.png',
+      'https://autoimage.capitalone.com/stock-media/chrome/2023-Toyota-Camry-SE-040-cc_2023TOC020024_01_2100_040.png?width=640&height=480',
+      'https://vehicle-images.dealerinspire.com/71a1-110007313/4T1F11AK8PU808883/4160c08445f7ad9a3b38f758ca3e95ad.jpg',
+      'https://www.clickheretesting.com/GreenvilleToyota/research/2023/camry/images/mlp-img-perf.webp',
+      'https://file.kelleybluebookimages.com/kbb/base/evox/CP/52443/2023-Toyota-Camry-front_52443_032_2400x1800_089_nologo.png',
+      'https://www.pepperstoyota.com/blogs/4162/wp-content/uploads/2023/11/camry1.jpg',
+      'https://static.overfuel.com/photos/60/108489/image-1.webp',
+      'https://i.ytimg.com/vi/q7l_d-vDjxw/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgYChVMA8=&rs=AOn4CLCsJEpXHSljQfa_w55g8rKLGTr6bg',
+      'https://hips.hearstapps.com/hmg-prod/images/c-009-1500x1000-1652720748.jpg?crop=1.00xw:0.920xh;0,0&resize=980:*',
+      'https://di-uploads-pod18.dealerinspire.com/toyotaofsmithfield/uploads/2022/08/22-camry-model.png',
+  ]" 
+  [carName]="'Tesla Model S'">
+</app-car-card>

@@ -1,0 +1,70 @@
+.car-card {
+  width: 300px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.car-image-container {
+  height: 200px;
+  position: relative;
+  background: #f8f8f8;
+}
+
+.car-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.remaining-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.slide-indicators {
+  display: flex;
+  gap: 6px;
+  padding: 12px;
+  justify-content: center;
+}
+
+.indicator {
+  height: 4px;
+  background: #e0e0e0;
+  flex: 1;
+  max-width: 200px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: #333;
+    transform: scaleY(1.2);
+  }
+}
+
+.car-name {
+  padding: 16px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+}

@@ -1,0 +1,30 @@
+<div class="car-card" 
+     (mouseleave)="resetSlide()"
+     (mousemove)="onMouseMove($event)">
+
+  <!-- Контейнер с фото -->
+  <div class="car-image-container">
+    <!-- Основное фото (показываем, если не на "Еще X") -->
+    <img *ngIf="!shouldShowRemaining()" 
+         [src]="carImages[currentSlideIndex]" 
+         [alt]="carName"
+         class="car-image">
+
+    <!-- Блок "Еще X машин" -->
+    <div *ngIf="shouldShowRemaining()" class="remaining-text">
+      Еще {{ getRemainingCount() }} фото
+    </div>
+  </div>
+
+  <!-- Индикаторы (полоски) -->
+  <div class="slide-indicators">
+    <!-- Полоски для основных фото (макс. 5) -->
+    <div *ngFor="let _ of [].constructor(totalIndicators); let i = index"
+         class="indicator"
+         [class.active]="i === currentSlideIndex || 
+                        (shouldShowRemaining() && i === maxVisibleSlides - 1)">
+    </div>
+  </div>
+
+  <div class="car-name">{{ carName }}</div>
+</div>
