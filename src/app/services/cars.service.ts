@@ -11,4 +11,8 @@ export class CarsService {
   getBrands(){
     return this.http.get("http://localhost:5000/cars/brands")
   }
+
+  getCars(){
+    return this.http.get("http://localhost:5000/cars/cars")
+  }
 }

@@ -1,0 +1,43 @@
+<div class="filter">
+  <div class="brands">
+    <div *ngFor="let brand of brands">
+      <div (click)="selectBrand(brand.title)" [class]="{ active: filterValues.brand === brand.title }">
+        <img [src]="brand.img" [alt]="brand.title" />
+        <span>{{ brand.title }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="specifications">
+    <div class="specifications-title">Быстрый подбор авто</div>
+    <div class="specifications-price">
+        <h4>Цена</h4>
+        <div>
+            <div>
+                <span>От</span>
+                <input type="number" [(ngModel)]="filterValues.priceRange.min" (input)="applyFilter()">
+            </div>
+            <div>
+                <span>До</span>
+                <input type="number" [(ngModel)]="filterValues.priceRange.max" (input)="applyFilter()">
+            </div>
+        </div>
+    </div>
+    <div class="specifications-additionals">
+        <select name="" id="">
+            <option value="" disabled selected hidden>Тип кузова</option>
+            <option value="">Яблоко</option>
+            <option value="">Банан</option>
+            <option value="">Груша</option>
+        </select>
+        <select name="" id="">
+            <option value="" disabled selected hidden>Коробка</option>
+            <option value="">Яблоко</option>
+            <option value="">Банан</option>
+            <option value="">Груша</option>
+        </select>
+    </div>
+
+    <button>Показать</button>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 .car-card {
-  width: 300px;
+  width: 350px;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   overflow: hidden;
@@ -8,8 +8,24 @@
   position: relative;
 }
 
+.car-favourite {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+
+  img {
+    width: 30px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+
+    &:hover {
+      transform: rotate(-7deg) scale(1.1);
+    }
+  }
+}
+
 .car-image-container {
-  height: 200px;
+  height: 210px;
   position: relative;
   background: #f8f8f8;
 }
@@ -43,7 +59,7 @@
   justify-content: center;
   position: absolute;
   width: 100%;
-  top: 185px;
+  top: 195px;
   pointer-events: none;
 }
 
