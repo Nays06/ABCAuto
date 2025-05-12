@@ -10,41 +10,50 @@
 
 .brands {
   display: grid;
-  grid-template-columns: repeat(5, 180px);
+  grid-template-columns: repeat(5, 155px);
   gap: 10px;
 
   & > div {
-    display: flex;
-    align-items: center;
     font-weight: 400;
     font-size: 16px;
-    user-select: none;
-    cursor: pointer;
+
+    div {
+      display: flex;
+      align-items: center;
+      user-select: none;
+      cursor: pointer;
+      width: fit-content;
+      transition: 0.3s;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
 
     img {
       margin-right: 10px;
-      width: 45px;
+      width: 30px;
     }
   }
 }
 
 .specifications {
-    margin-left: 50px;
+  margin-left: 50px;
 
-    button {
-        width: 100%;
-        padding: 20px 0;
-font-weight: 700;
-font-size: 16px;
-text-align: center;
-text-transform: uppercase;
-color: white;
-background-color: var(--primary-color);
-border-radius: 6px;
-outline: none;
-border: none;
-margin-top: 20px;
-    }
+  button {
+    width: 100%;
+    padding: 20px 0;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    color: white;
+    background-color: var(--primary-color);
+    border-radius: 6px;
+    outline: none;
+    border: none;
+    margin-top: 20px;
+  }
 }
 
 .specifications-title {
@@ -54,7 +63,7 @@ margin-top: 20px;
 }
 
 .specifications-price {
-    margin-top: 20px;
+  margin-top: 20px;
   h4 {
     font-weight: 400;
     font-size: 16px;
@@ -84,9 +93,9 @@ margin-top: 20px;
 }
 
 .specifications-additionals {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
   select {
     padding: 20px;
     padding-right: 65px;

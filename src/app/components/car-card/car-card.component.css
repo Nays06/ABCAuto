@@ -5,11 +5,7 @@
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-  }
+  position: relative;
 }
 
 .car-image-container {
@@ -43,8 +39,12 @@
 .slide-indicators {
   display: flex;
   gap: 6px;
-  padding: 12px;
+  padding: 5px;
   justify-content: center;
+  position: absolute;
+  width: 100%;
+  top: 185px;
+  pointer-events: none;
 }
 
 .indicator {
@@ -56,15 +56,27 @@
   transition: all 0.3s ease;
 
   &.active {
-    background: #333;
+    background: var(--primary-color);
     transform: scaleY(1.2);
   }
 }
 
+.car-container {
+  padding: 5px 10px;
+}
+
 .car-name {
-  padding: 16px;
-  text-align: center;
   font-size: 17px;
-  font-weight: 600;
-  color: #333;
+  margin-bottom: 5px;
+}
+
+.car-price {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.car-additionals {
+  color: #1c212899;
+  font-size: 15px;
 }

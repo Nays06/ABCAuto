@@ -1,30 +1,39 @@
-<div class="car-card" 
-     (mouseleave)="resetSlide()"
-     (mousemove)="onMouseMove($event)">
+<div
+  class="car-card"
+>
+  <div class="car-image-container"
+  (mouseleave)="resetSlide()"
+  (mousemove)="onMouseMove($event)"
+  >
+    <img
+      *ngIf="!shouldShowRemaining()"
+      [src]="car.images[currentSlideIndex]"
+      [alt]="car.brand"
+      class="car-image"
+    />
 
-  <!-- Контейнер с фото -->
-  <div class="car-image-container">
-    <!-- Основное фото (показываем, если не на "Еще X") -->
-    <img *ngIf="!shouldShowRemaining()" 
-         [src]="carImages[currentSlideIndex]" 
-         [alt]="carName"
-         class="car-image">
+    <img class="car-image" *ngIf="shouldShowRemaining()" [src]="car.images[4]" alt="" />
 
-    <!-- Блок "Еще X машин" -->
     <div *ngIf="shouldShowRemaining()" class="remaining-text">
       Еще {{ getRemainingCount() }} фото
     </div>
   </div>
 
-  <!-- Индикаторы (полоски) -->
   <div class="slide-indicators">
-    <!-- Полоски для основных фото (макс. 5) -->
-    <div *ngFor="let _ of [].constructor(totalIndicators); let i = index"
-         class="indicator"
-         [class.active]="i === currentSlideIndex || 
-                        (shouldShowRemaining() && i === maxVisibleSlides - 1)">
-    </div>
+    <div
+      *ngFor="let _ of [].constructor(totalIndicators); let i = index"
+      class="indicator"
+      [class.active]="
+        i === currentSlideIndex ||
+        (shouldShowRemaining() && i === maxVisibleSlides - 1)
+      "
+    ></div>
   </div>
 
-  <div class="car-name">{{ carName }}</div>
+
+  <div class="car-container">
+    <div class="car-price">{{ formatPrice(car.price) }} ₽</div>
+    <div class="car-name">{{ car.brand }} {{ car.model }}</div>
+    <div class="car-additionals">{{ car.year }} / {{ car.mileage }} км</div>
+  </div>
 </div>

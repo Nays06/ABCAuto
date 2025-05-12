@@ -8,29 +8,27 @@ import { Component, Input } from '@angular/core';
   styleUrl: './car-card.component.css',
 })
 export class CarCardComponent {
-  @Input() carImages: string[] = [];
-  @Input() carName: string = '';
+  @Input() car: any = {};
 
   currentSlideIndex = 0;
-  readonly maxVisibleSlides = 5; // Максимум 5 фото + 1 индикатор "Еще X"
+  readonly maxVisibleSlides = 5;
 
-  // Для удобства в шаблоне
   get totalIndicators(): number {
-    return Math.min(this.carImages.length, this.maxVisibleSlides);
+    return Math.min(this.car.images.length, this.maxVisibleSlides);
   }
 
   onMouseMove(event: MouseEvent) {
     const element = event.currentTarget as HTMLElement;
-    if (!element || this.carImages.length === 0) return;
+    if (!element || this.car.images.length === 0) return;
 
     const rect = element.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const percent = x / rect.width;
 
-    // 0 → 0%, 1 → 20%, 2 → 40%, 3 → 60%, 4 → 80%
+  
     this.currentSlideIndex = Math.min(
-      Math.floor(percent * 5),
-      this.carImages.length - 1
+      Math.floor(percent * (this.car.images.length >= 5 ? 5 : this.car.images.length)),
+      this.car.images.length - 1
     );
   }
 
@@ -39,14 +37,18 @@ export class CarCardComponent {
   }
 
   getRemainingCount(): number {
-    return this.carImages.length - this.maxVisibleSlides;
+    return this.car.images.length - this.maxVisibleSlides;
   }
 
-  // Показывать ли надпись "Еще X" (для 5-го слайда, если фото больше 5)
+
   shouldShowRemaining(): boolean {
     return (
-      this.carImages.length > this.maxVisibleSlides &&
+      this.car.images.length > this.maxVisibleSlides &&
       this.currentSlideIndex >= this.maxVisibleSlides - 1
     );
+  }
+
+  formatPrice(price: number): string {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 }
