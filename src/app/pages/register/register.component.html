@@ -1,0 +1,43 @@
+<div class="auth-wrapper">
+  <div class="auth-card register">
+    <div class="auth-header">
+      <h2>Создайте аккаунт</h2>
+      <p>Присоединяйтесь к нашему сообществу</p>
+    </div>
+
+    <div class="auth-form">
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" placeholder="Имя" [(ngModel)]="name" />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" placeholder="Фамилия" [(ngModel)]="surname" />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" placeholder="Email" [(ngModel)]="email" />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" placeholder="Пароль" [(ngModel)]="password" />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" placeholder="Подтвердите пароль" [(ngModel)]="repeatPassword" />
+      </div>
+
+      <button type="submit" class="btn" (click)="register()">Зарегистрироваться</button>
+    </div>
+
+    <div class="auth-footer">
+      Уже есть аккаунт? <a routerLink="/login">Войдите</a>
+    </div>
+  </div>
+
+  <div class="auth-image register-bg"></div>
+</div>

@@ -46,6 +46,10 @@
   }
 }
 
+.header-logo {
+  cursor: pointer;
+}
+
 nav ul {
   list-style-type: none;
   padding: 0;

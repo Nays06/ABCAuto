@@ -4,7 +4,7 @@ import { CarsService } from '../../services/cars.service';
 import { OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
-import { FilterComponent } from "../../components/filter/filter.component";
+import { FilterComponent } from '../../components/filter/filter.component';
 
 @Component({
   selector: 'app-home',
