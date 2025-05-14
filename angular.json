@@ -27,6 +27,8 @@
               }
             ],
             "styles": [
+              "@ngxpert/hot-toast/styles.css",
+              "node_modules/@ngxpert/hot-toast/src/styles/styles.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -85,6 +87,7 @@
               }
             ],
             "styles": [
+              "@ngxpert/hot-toast/styles.css",
               "src/styles.css"
             ],
             "scripts": []

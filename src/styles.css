@@ -14,3 +14,13 @@
 img {
     display: block;
 }
+
+@keyframes driveRight {
+  0% { transform: translateX(-100px) scaleX(-1); }
+  100% { transform: translateX(calc(100vw + 100px)) scaleX(-1); }
+}
+
+@keyframes driveLeft {
+  0% { transform: translateX(calc(100vw + 100px)) translateY(0); }
+  100% { transform: translateX(-100px) translateY(0); }
+}

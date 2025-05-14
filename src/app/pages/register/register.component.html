@@ -5,33 +5,126 @@
       <p>Присоединяйтесь к нашему сообществу</p>
     </div>
 
-    <div class="auth-form">
+    <div class="auth-form" [formGroup]="authForm">
       <div class="input-group">
         <i class="fas fa-user"></i>
-        <input type="text" placeholder="Имя" [(ngModel)]="name" />
+        <input type="text" placeholder="Имя" formControlName="name" />
+        <div
+          *ngIf="authForm.get('name')?.touched && authForm.get('name')?.errors"
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('name')?.errors?.['required']"
+            >Имя обязательно</span
+          >
+          <span *ngIf="authForm.get('name')?.errors?.['minlength']"
+            >Минимум 2 символа</span
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="fas fa-user"></i>
-        <input type="text" placeholder="Фамилия" [(ngModel)]="surname" />
+        <input type="text" placeholder="Фамилия" formControlName="surname" />
+        <div
+          *ngIf="
+            authForm.get('surname')?.touched && authForm.get('surname')?.errors
+          "
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('surname')?.errors?.['required']"
+            >Фамилия обязательна</span
+          >
+          <span *ngIf="authForm.get('surname')?.errors?.['minlength']"
+            >Минимум 2 символа</span
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="fas fa-envelope"></i>
-        <input type="email" placeholder="Email" [(ngModel)]="email" />
+        <input type="email" placeholder="Email" formControlName="email" />
+        <div
+          *ngIf="
+            authForm.get('email')?.touched && authForm.get('email')?.errors
+          "
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('email')?.errors?.['required']"
+            >Email обязателен</span
+          >
+          <span *ngIf="authForm.get('email')?.errors?.['email']"
+            >Некорректный email</span
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Пароль" [(ngModel)]="password" />
+        <input
+          type="password"
+          placeholder="Пароль"
+          formControlName="password"
+        />
+        <div
+          *ngIf="
+            authForm.get('password')?.touched &&
+            authForm.get('password')?.errors
+          "
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('password')?.errors?.['required']"
+            >Пароль обязателен</span
+          >
+          <span *ngIf="authForm.get('password')?.errors?.['minlength']"
+            >Минимум 6 символов</span
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Подтвердите пароль" [(ngModel)]="repeatPassword" />
+        <input
+          type="password"
+          placeholder="Подтвердите пароль"
+          formControlName="repeatPassword"
+        />
+        <div
+          *ngIf="authForm.get('repeatPassword')?.touched && authForm.errors?.['mismatch']"
+          class="error-message"
+        >
+          Пароли не совпадают
+        </div>
       </div>
 
-      <button type="submit" class="btn" (click)="register()">Зарегистрироваться</button>
+      <div class="input-group">
+        <input
+          type="file"
+          accept="image/jpeg, image/jpg, image/png"
+          (change)="onFileSelected($event)"
+          (blur)="fileTouched = true"
+          #fileInput
+        />
+
+        <div
+          *ngIf="fileTouched && authForm.get('avatar')?.errors"
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('avatar')?.errors?.['invalidType']">
+            Допустимы только изображения JPEG, JPG или PNG
+          </span>
+          <span *ngIf="authForm.get('avatar')?.errors?.['invalidSize']">
+            Размер файла не должен превышать 2МБ
+          </span>
+        </div>
+      </div>
+
+      <div class="auth-error">
+        {{ regError }}
+      </div>
+
+      <button class="btn" (click)="register()" [disabled]="authForm.invalid">
+        Зарегистрироваться
+      </button>
     </div>
 
     <div class="auth-footer">
@@ -39,5 +132,16 @@
     </div>
   </div>
 
-  <div class="auth-image register-bg"></div>
+  <div class="auth-image register-bg">
+    <div
+      *ngFor="let car of cars"
+      class="car"
+      [style.bottom.%]="car.y"
+      [style.fontSize.px]="car.size"
+      [style.opacity]="car.opacity"
+      [style.animation]="getCarAnimation(car) + ' !important'"
+    >
+      {{ car.emoji }}
+    </div>
+  </div>
 </div>

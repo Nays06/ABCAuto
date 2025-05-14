@@ -8,7 +8,7 @@ import { FilterComponent } from '../../components/filter/filter.component';
 
 @Component({
   selector: 'app-home',
-  imports: [VideoSliderComponent, NgFor, CarCardComponent, FilterComponent],
+  imports: [VideoSliderComponent, FilterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

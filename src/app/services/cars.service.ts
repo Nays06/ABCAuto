@@ -7,12 +7,17 @@ import { Injectable } from '@angular/core';
 export class CarsService {
 
   constructor(private http: HttpClient) { }
+  apiUrl = "http://localhost:5555/cars"
 
   getBrands(){
-    return this.http.get("http://localhost:5000/cars/brands")
+    return this.http.get(`${this.apiUrl}/brands`)
   }
 
   getCars(){
-    return this.http.get("http://localhost:5000/cars/cars")
+    return this.http.get(`${this.apiUrl}/cars`)
+  }
+
+  addCar(newCar: any) {
+    return this.http.post(`${this.apiUrl}/add`, newCar)
   }
 }

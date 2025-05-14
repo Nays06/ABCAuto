@@ -1,4 +1,3 @@
-// filter.component.ts
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarsService } from '../../services/cars.service';

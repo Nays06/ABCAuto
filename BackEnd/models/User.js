@@ -6,7 +6,9 @@ const User = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     avatar: { type: String },
-    roles: [{type: String, ref: "Role"}]
+    roles: [{ type: String, ref: "Role" }],
+    registrationDate: { type: Date, default: Date.now },
+    reviews: { type: Array, default: [] },
 })
 
 module.exports = model("Users", User)

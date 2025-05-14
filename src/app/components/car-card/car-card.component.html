@@ -1,5 +1,6 @@
 <div
   class="car-card"
+  (click)="showToast()"
 >
   <div class="car-favourite">
     <img src="./assets/img/components/carCard/heart.svg" alt="">
@@ -10,7 +11,7 @@
   >
     <img
       *ngIf="!shouldShowRemaining()"
-      [src]="car.images[currentSlideIndex]"
+      [src]="car.images[0].slice(0, car.images[0].indexOf('\\')) === 'uploads' ? `http://localhost:5555/${car.images[currentSlideIndex]}` : car.images[currentSlideIndex]"
       [alt]="car.brand"
       class="car-image"
     />

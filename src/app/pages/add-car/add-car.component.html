@@ -1,0 +1,182 @@
+<div class="add-car-container">
+  <h1>Добавить новый автомобиль</h1>
+  
+  <form [formGroup]="carForm" (ngSubmit)="onSubmit()" class="car-form">
+    <div class="form-group">
+      <label for="brand">Бренд</label>
+      <input 
+        type="text" 
+        id="brand" 
+        formControlName="brand" 
+        placeholder="Toyota"
+        [ngClass]="{ 'is-invalid': submitted && f['brand'].errors }"
+      >
+      <div *ngIf="submitted && f['brand'].errors" class="invalid-feedback">
+        <div *ngIf="f['brand'].errors['required']">Поле обязательно для заполнения</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="model">Модель</label>
+      <input 
+        type="text" 
+        id="model" 
+        formControlName="model" 
+        placeholder="Camry"
+        [ngClass]="{ 'is-invalid': submitted && f['model'].errors }"
+      >
+      <div *ngIf="submitted && f['model'].errors" class="invalid-feedback">
+        <div *ngIf="f['model'].errors['required']">Поле обязательно для заполнения</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="year">Год выпуска</label>
+      <input 
+        type="number" 
+        id="year" 
+        formControlName="year" 
+        min="1900" 
+        [max]="currentYear"
+        [ngClass]="{ 'is-invalid': submitted && f['year'].errors }"
+      >
+      <div *ngIf="submitted && f['year'].errors" class="invalid-feedback">
+        <div *ngIf="f['year'].errors['required']">Поле обязательно для заполнения</div>
+        <div *ngIf="f['year'].errors['min'] || f['year'].errors['max']">
+          Год должен быть между 1900 и {{currentYear}}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="engine">Двигатель</label>
+      <input 
+        type="text" 
+        id="engine" 
+        formControlName="engine" 
+        placeholder="2.5L 4-цилиндровый"
+        [ngClass]="{ 'is-invalid': submitted && f['engine'].errors }"
+      >
+      <div *ngIf="submitted && f['engine'].errors" class="invalid-feedback">
+        <div *ngIf="f['engine'].errors['required']">Поле обязательно для заполнения</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="transmission">Трансмиссия</label>
+      <select 
+        id="transmission" 
+        formControlName="transmission"
+        [ngClass]="{ 'is-invalid': submitted && f['transmission'].errors }"
+      >
+        <option value="" disabled selected>Выберите тип</option>
+        <option value="Автоматическая">Автоматическая</option>
+        <option value="Механическая">Механическая</option>
+        <option value="Роботизированная">Роботизированная</option>
+        <option value="Вариатор">Вариатор</option>
+      </select>
+      <div *ngIf="submitted && f['transmission'].errors" class="invalid-feedback">
+        <div *ngIf="f['transmission'].errors['required']">Поле обязательно для заполнения</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="mileage">Пробег (км)</label>
+      <input 
+        type="number" 
+        id="mileage" 
+        formControlName="mileage" 
+        min="0"
+        [ngClass]="{ 'is-invalid': submitted && f['mileage'].errors }"
+      >
+      <div *ngIf="submitted && f['mileage'].errors" class="invalid-feedback">
+        <div *ngIf="f['mileage'].errors['required']">Поле обязательно для заполнения</div>
+        <div *ngIf="f['mileage'].errors['min']">Пробег не может быть отрицательным</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="fuelType">Тип топлива</label>
+      <select 
+        id="fuelType" 
+        formControlName="fuelType"
+        [ngClass]="{ 'is-invalid': submitted && f['fuelType'].errors }"
+      >
+        <option value="" disabled selected>Выберите тип</option>
+        <option value="Бензин">Бензин</option>
+        <option value="Дизель">Дизель</option>
+        <option value="Гибрид">Гибрид</option>
+        <option value="Электрический">Электрический</option>
+        <option value="Газ">Газ</option>
+      </select>
+      <div *ngIf="submitted && f['fuelType'].errors" class="invalid-feedback">
+        <div *ngIf="f['fuelType'].errors['required']">Поле обязательно для заполнения</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="color">Цвет</label>
+      <input 
+        type="text" 
+        id="color" 
+        formControlName="color" 
+        placeholder="Красный"
+        [ngClass]="{ 'is-invalid': submitted && f['color'].errors }"
+      >
+      <div *ngIf="submitted && f['color'].errors" class="invalid-feedback">
+        <div *ngIf="f['color'].errors['required']">Поле обязательно для заполнения</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="price">Цена (₽)</label>
+      <input 
+        type="number" 
+        id="price" 
+        formControlName="price" 
+        min="0"
+        [ngClass]="{ 'is-invalid': submitted && f['price'].errors }"
+      >
+      <div *ngIf="submitted && f['price'].errors" class="invalid-feedback">
+        <div *ngIf="f['price'].errors['required']">Поле обязательно для заполнения</div>
+        <div *ngIf="f['price'].errors['min']">Цена не может быть отрицательной</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+  <label for="images">Изображения</label>
+  <input 
+    type="file" 
+    id="images" 
+    (change)="onFileChange($event)" 
+    multiple
+    accept="image/jpeg, image/jpg, image/png"
+    [ngClass]="{ 'is-invalid': submitted && f['images'].errors }"
+  >
+  <div *ngIf="submitted && f['images'].errors" class="invalid-feedback">
+    <div *ngIf="f['images'].errors['required']">Необходимо загрузить хотя бы одно изображение</div>
+    <div *ngIf="f['images'].errors['maxImageCount']">Максимальное количество изображений: {{MAX_IMAGE_COUNT}}</div>
+    <div *ngIf="f['images'].errors['maxImageSize']">Максимальный размер изображения: 3MB</div>
+  </div>
+  
+  <div class="upload-hints">
+    <small>Максимум {{MAX_IMAGE_COUNT}} изображений, каждое не более 3MB</small>
+  </div>
+  
+  <div class="image-preview-container" *ngIf="previewUrls.length > 0">
+    <h3>Предпросмотр изображений ({{previewUrls.length}}/{{MAX_IMAGE_COUNT}}):</h3>
+    <div class="image-preview-grid">
+      <div class="image-preview" *ngFor="let url of previewUrls; let i = index">
+        <img [src]="url" alt="Превью изображения">
+        <button type="button" class="remove-image-btn" (click)="removeImage(i)">×</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-btn">Добавить автомобиль</button>
+      <button type="button" class="reset-btn" (click)="onReset()">Очистить форму</button>
+    </div>
+  </form>
+</div>

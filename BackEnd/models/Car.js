@@ -19,6 +19,8 @@ const Car = new Schema({
     color: { type: String, required: true },
     price: { type: Number, required: true },
     images: { type: Array, required: true },
+    sellerId: { type: String, required: true },
+    registrationDate: { type: Date, default: Date.now },
 })
 
 module.exports = model("Cars", Car)

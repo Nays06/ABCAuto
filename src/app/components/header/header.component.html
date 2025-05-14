@@ -24,40 +24,75 @@
       <nav>
         <ul>
           <li>
-            <a routerLink="/" routerLinkActive="active" arriaCurrentWhenActive="page">Подбор авто</a>
+            <a
+              routerLink="/"
+              routerLinkActive="active"
+              arriaCurrentWhenActive="page"
+              >Подбор авто</a
+            >
           </li>
           <li>
-            <a routerLink="/about" routerLinkActive="active" arriaCurrentWhenActive="page">О компании</a>
+            <a
+              routerLink="/about"
+              routerLinkActive="active"
+              arriaCurrentWhenActive="page"
+              >О компании</a
+            >
           </li>
           <li>
-            <a routerLink="/techcenter" routerLinkActive="active" arriaCurrentWhenActive="page">Техцентр</a>
+            <a
+              routerLink="/techcenter"
+              routerLinkActive="active"
+              arriaCurrentWhenActive="page"
+              >Техцентр</a
+            >
           </li>
           <li>
-            <a routerLink="/reviews" routerLinkActive="active" arriaCurrentWhenActive="page">Отзывы</a>
+            <a
+              routerLink="/reviews"
+              routerLinkActive="active"
+              arriaCurrentWhenActive="page"
+              >Отзывы</a
+            >
           </li>
           <li>
-            <a routerLink="/contacts" routerLinkActive="active" arriaCurrentWhenActive="page">Контакты</a>
+            <a
+              routerLink="/contacts"
+              routerLinkActive="active"
+              arriaCurrentWhenActive="page"
+              >Контакты</a
+            >
           </li>
         </ul>
       </nav>
 
       <div class="header-actions">
         <div class="header-favorite">
-          <img src="./assets/img/components/header/heart.svg" alt="heart">
-          <div class="counter">10</div>
+          <img src="./assets/img/components/header/heart.svg" alt="heart" />
+          <!-- <div class="counter">10</div> -->
         </div>
         <!-- <div class="header-comparison">
           <img src="./assets/img/components/header/comparison.svg" alt="comparison">
           <div class="counter">12</div>
         </div> -->
         <div class="header-search">
-          <img src="./assets/img/components/header/search.svg" alt="search">
+          <img src="./assets/img/components/header/search.svg" alt="search" />
         </div>
       </div>
 
-      <div class="header-register" (click)="goToRegister()">
-        Регистрация
+      @if (isAuthenticated) {
+      <div class="user-ava" #avatar (click)="toggleDropdown()">
+        <img [src]="`http://localhost:5555/${avatarUrl}`" alt="avatar" />
       </div>
+
+      @if (isDropdownOpen) {
+      <div class="dropdown" #dropdown>
+        <div class="dropdown-item" (click)="goToProfile()">Профиль</div>
+        <div class="dropdown-item" (click)="logout()">Выйти</div>
+      </div>
+      } } @else {
+      <div class="header-register" (click)="goToRegister()">Регистрация</div>
+      }
     </div>
   </div>
 </header>

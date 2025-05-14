@@ -5,24 +5,72 @@
       <p>Войдите, чтобы продолжить</p>
     </div>
 
-    <form class="auth-form">
+    <div class="auth-form" [formGroup]="authForm">
       <div class="input-group">
         <i class="fas fa-envelope"></i>
-        <input type="email" placeholder="Email" required />
+        <input type="email" placeholder="Email" formControlName="email" />
+        <div
+          *ngIf="
+            authForm.get('email')?.touched && authForm.get('email')?.errors
+          "
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('email')?.errors?.['required']"
+            >Email обязателен</span
+          >
+          <span *ngIf="authForm.get('email')?.errors?.['email']"
+            >Некорректный email</span
+          >
+        </div>
       </div>
 
       <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Пароль" required />
+        <input
+          type="password"
+          placeholder="Пароль"
+          formControlName="password"
+        />
+        <div
+          *ngIf="
+            authForm.get('password')?.touched &&
+            authForm.get('password')?.errors
+          "
+          class="error-message"
+        >
+          <span *ngIf="authForm.get('password')?.errors?.['required']"
+            >Пароль обязателен</span
+          >
+          <span *ngIf="authForm.get('password')?.errors?.['minlength']"
+            >Минимум 6 символов</span
+          >
+        </div>
       </div>
 
-      <button type="submit" class="btn">Войти</button>
-    </form>
+      <div class="auth-error">
+        {{ logError }}
+      </div>
+
+      <button class="btn" (click)="login()" [disabled]="authForm.invalid">
+        Войти
+      </button>
+    </div>
 
     <div class="auth-footer">
       Нет аккаунта? <a routerLink="/register">Зарегистрироваться</a>
     </div>
   </div>
 
-  <div class="auth-image login-bg"></div>
+  <div class="auth-image register-bg">
+    <div
+      *ngFor="let car of cars"
+      class="car"
+      [style.bottom.%]="car.y"
+      [style.fontSize.px]="car.size"
+      [style.opacity]="car.opacity"
+      [style.animation]="getCarAnimation(car) + ' !important'"
+    >
+      {{ car.emoji }}
+    </div>
+  </div>
 </div>

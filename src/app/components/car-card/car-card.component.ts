@@ -1,5 +1,6 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-car-card',
@@ -9,6 +10,12 @@ import { Component, Input } from '@angular/core';
 })
 export class CarCardComponent {
   @Input() car: any = {};
+
+  constructor(private toast: HotToastService) {}
+
+  showToast() {
+    this.toast.error('Стиль по кастому!');
+  }
 
   currentSlideIndex = 0;
   readonly maxVisibleSlides = 5;
@@ -25,9 +32,10 @@ export class CarCardComponent {
     const x = event.clientX - rect.left;
     const percent = x / rect.width;
 
-  
     this.currentSlideIndex = Math.min(
-      Math.floor(percent * (this.car.images.length >= 5 ? 5 : this.car.images.length)),
+      Math.floor(
+        percent * (this.car.images.length >= 5 ? 5 : this.car.images.length)
+      ),
       this.car.images.length - 1
     );
   }
@@ -39,7 +47,6 @@ export class CarCardComponent {
   getRemainingCount(): number {
     return this.car.images.length - this.maxVisibleSlides;
   }
-
 
   shouldShowRemaining(): boolean {
     return (
