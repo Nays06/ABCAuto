@@ -14,7 +14,7 @@ export class CarCardComponent {
   constructor(private toast: HotToastService) {}
 
   showToast() {
-    this.toast.error('Стиль по кастому!');
+    this.toast.error('123123');
   }
 
   currentSlideIndex = 0;

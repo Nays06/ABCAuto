@@ -142,7 +142,7 @@ export class RegisterComponent {
   }
 
   generateRandomCars() {
-    const carCount = 50 + Math.floor(Math.random() * 10);
+    const carCount = 100 + Math.floor(Math.random() * 10);
     this.cars = [];
 
     for (let i = 0; i < carCount; i++) {

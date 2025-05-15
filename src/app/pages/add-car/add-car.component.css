@@ -162,12 +162,6 @@
   font-size: 1rem;
   margin-bottom: 0.5rem;
   color: #555;
-
-  &::after {
-    content: " (" attr(data-count) "/" attr(data-max) ")";
-    font-weight: normal;
-    color: #666;
-  }
 }
 
 @media (max-width: 600px) {

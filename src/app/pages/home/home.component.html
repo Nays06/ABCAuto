@@ -1,12 +1,55 @@
-<div
-  style="
-    width: 98%;
-    border-radius: 25px;
-    margin: 0 auto;
-    overflow: hidden;
-  "
->
+<div class="slider">
   <app-video-slider />
 </div>
 
 <app-filter />
+
+<div class="cars">
+  <app-car-card *ngFor="let car of cars" [car]="car" />
+</div>
+
+<div class="section">
+  <div class="section-title">Наши подборки</div>
+
+  <div class="section-cont">
+    <div class="compilation" *ngFor="let compilation of compilations">
+      <div class="compilation-img">
+        <img [src]="compilation.imgSrc" alt="">
+      </div>
+      <div class="compilation-cont">
+        <div class="compilation-title">{{ compilation.title }}</div>
+        <div class="compilation-btn">Посмотреть</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Отзывы</div>
+
+  <div class="section-cont">
+    <div class="feedback" *ngFor="let compilation of compilations">
+      <div class="feedback-user">Сергей Васильев</div>
+      <div class="feedback-text">«Я нахожусь в салоне ALTERA, всем советую, хороший коллектив, добрые люди, приветствуют, это не обман, вам гарантия 100 % точно, чисто от меня, приезжайте! Мы приехали приобрести автомобиль в салон ALTERA...</div>
+      <div class="feedback-btn">
+        Подробнее
+
+        <img src="./assets/img/pages/home/Vector.svg" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Блог</div>
+
+  <div class="section-cont">
+    <div class="blog" *ngFor="let compilation of compilations">
+      <div class="blog-img">
+        <img src="./assets/img/pages/home/compilation1.jpg" alt="">
+      </div>
+      <div class="blog-date">25 октября</div>
+      <div class="blog-title">Тест Skoda Karoq Scout - городской карлик или настоящий скаут</div>
+    </div>
+  </div>
+</div>

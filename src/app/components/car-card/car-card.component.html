@@ -16,7 +16,7 @@
       class="car-image"
     />
 
-    <img class="car-image" *ngIf="shouldShowRemaining()" [src]="car.images[4]" alt="" />
+    <img class="car-image" *ngIf="shouldShowRemaining()" [src]="car.images[4].slice(0, car.images[4].indexOf('\\')) === 'uploads' ? `http://localhost:5555/${car.images[currentSlideIndex]}` : car.images[currentSlideIndex]" alt="" />
 
     <div *ngIf="shouldShowRemaining()" class="remaining-text">
       Еще {{ getRemainingCount() }} фото

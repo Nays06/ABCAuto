@@ -47,9 +47,16 @@
   <div class="section">
     <h2>Мои объявления</h2>
     <button class="btn-add-car" (click)="goToAddCar()">Добавить автомобиль</button>
-    <div class="cars">
+    @if (user.adsCount > 0) {
+      <div class="cars">
         <app-car-card *ngFor="let car of user.ads" [car]="car" />
     </div>
+    } @else {
+      <div class="no-ads">
+        У вас пока нет объявлений
+      </div>
+    }
+    
   </div>
 
   <div class="section">

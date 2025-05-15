@@ -86,6 +86,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin-top: 10px;
   margin-bottom: 20px;
   display: inline-block;
 }
@@ -98,6 +99,14 @@
     margin: 20px auto;
     justify-content: space-between;
     align-items: center;
+}
+
+.no-ads{
+  width: 100%;
+  padding: 50px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .extra-info {

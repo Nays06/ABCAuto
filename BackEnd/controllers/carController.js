@@ -14,11 +14,15 @@ class CarController {
 
   async getCars(req, res) {
     try {
-      const limit = req.query.limit || 10;
+      const limit = req.query.limit || 12;
       const page = req.query.page || 1;
       const skip = (page - 1) * limit;
-
-      const cars = await Car.find().limit(limit).skip(skip);
+  
+      const cars = await Car.aggregate([
+        { $sample: { size: limit } },
+        { $skip: skip }
+      ]);
+      
       res.status(200).json(cars);
     } catch (error) {
       console.log(error);
