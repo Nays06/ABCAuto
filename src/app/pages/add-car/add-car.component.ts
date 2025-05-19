@@ -9,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CarsService } from '../../services/cars.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-car',
@@ -27,10 +28,12 @@ export class AddCarComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private carService: CarsService
+    private carService: CarsService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.initializeForm();
   }
 
@@ -50,6 +53,10 @@ export class AddCarComponent implements OnInit {
       transmission: ['', Validators.required],
       mileage: ['', [Validators.required, Validators.min(0)]],
       fuelType: ['', Validators.required],
+      horsepower: [''],
+      country: [''],
+      driveType: [''],
+      bodyType: [''],
       color: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
       images: [
@@ -150,10 +157,8 @@ export class AddCarComponent implements OnInit {
       return;
     }
 
-    // Создаем FormData для отправки
     const formData = new FormData();
 
-    // Добавляем простые поля
     const formValue = this.carForm.value;
     Object.keys(formValue).forEach((key) => {
       if (key !== 'images') {
@@ -161,19 +166,16 @@ export class AddCarComponent implements OnInit {
       }
     });
 
-    // Добавляем файлы
     const imageFiles: File[] = this.carForm.get('images')?.value || [];
     imageFiles.forEach((file, index) => {
       formData.append('image[]', file);
-      // или formData.append(`images[${index}]`, file, file.name);
-      // в зависимости от ожидаемого формата сервера
     });
 
-    // Теперь можно отправлять formData
     this.carService.addCar(formData).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         alert('Автомобиль успешно добавлен!');
         this.onReset();
+        this.router.navigate(['/car', response.car._id])
       },
       error: (err) => {
         console.error('Ошибка при добавлении автомобиля:', err);

@@ -2,10 +2,10 @@ const User = require("../models/User");
 const Role = require("../models/UserRole");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const secret = process.env.JWT_SECRET;
 const fs = require("fs");
 const Car = require("../models/Car");
+require("dotenv").config();
+const secret = process.env.JWT_SECRET;
 
 const generateAccessToken = (id) => {
   const payload = {
@@ -134,7 +134,17 @@ class authController {
       }
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Ошибка данных профиля" });
+      res.status(500).json({ message: "Ошибка вывода данных профиля" });
+    }
+  }
+
+  async getID(req, res) {
+    try {
+      const id = req.user.id;
+      res.status(200).json({ message: "Успешно", id })
+    } catch (err) {
+      console.log(err)
+      res.status(500).json({ message: "Ошибка вывода id" });
     }
   }
 }

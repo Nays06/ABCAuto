@@ -1,5 +1,6 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
@@ -11,10 +12,11 @@ import { HotToastService } from '@ngxpert/hot-toast';
 export class CarCardComponent {
   @Input() car: any = {};
 
-  constructor(private toast: HotToastService) {}
+  constructor(private toast: HotToastService, private router: Router) {}
 
   showToast() {
-    this.toast.error('123123');
+    this.toast.error(this.car._id);
+    this.router.navigate(['/car', this.car._id]);
   }
 
   currentSlideIndex = 0;

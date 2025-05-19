@@ -9,5 +9,6 @@ router.post("/login", authController.login);
 // router.get("/users", authMiddleware, authController.getUsers);
 router.get("/profile", authMiddleware, authController.getProfile);
 router.get("/avatar", authMiddleware, authController.getAvatar);
+router.get("/id", authMiddleware, authController.getID);
 
 module.exports = router;

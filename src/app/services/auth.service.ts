@@ -38,7 +38,11 @@ export class AuthService {
       (res: any) => {
         this.updateAvatar(res.avatar);
       },
-      (err) => console.error('Error loading avatar:', err)
+      (err) => console.error('Ошибка загрузки аватарки:', err)
     );
+  }
+
+  getUserID() {
+    return this.http.get(`${this.apiURL}/id`);
   }
 }

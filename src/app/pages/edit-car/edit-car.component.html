@@ -1,5 +1,5 @@
 <div class="add-car-container">
-  <h1>Добавить новый автомобиль</h1>
+  <h1>Изменить данные автомобиля</h1>
 
   <form [formGroup]="carForm" (ngSubmit)="onSubmit()" class="car-form">
     <div class="form-group">
@@ -115,11 +115,11 @@
         [ngClass]="{ 'is-invalid': submitted && f['fuelType'].errors }"
       >
         <option value="" disabled selected>Выберите тип</option>
-        <option value="Бензин">Бензин</option>
-        <option value="Дизель">Дизель</option>
-        <option value="Гибрид">Гибрид</option>
-        <option value="Электрический">Электрический</option>
-        <option value="Газ">Газ</option>
+        <option value="Gasoline">Бензин</option>
+        <option value="Diesel">Дизель</option>
+        <option value="Hybrid">Гибрид</option>
+        <option value="Electric">Электрический</option>
+        <option value="Gas">Газ</option>
       </select>
       <div *ngIf="submitted && f['fuelType'].errors" class="invalid-feedback">
         <div *ngIf="f['fuelType'].errors['required']">
@@ -224,61 +224,8 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="images" class="required">Изображения</label>
-      <input
-        type="file"
-        id="images"
-        (change)="onFileChange($event)"
-        multiple
-        accept="image/jpeg, image/jpg, image/png"
-        [ngClass]="{ 'is-invalid': submitted && f['images'].errors }"
-      />
-      <div *ngIf="submitted && f['images'].errors" class="invalid-feedback">
-        <div *ngIf="f['images'].errors['required']">
-          Необходимо загрузить хотя бы одно изображение
-        </div>
-        <div *ngIf="f['images'].errors['maxImageCount']">
-          Максимальное количество изображений: {{ MAX_IMAGE_COUNT }}
-        </div>
-        <div *ngIf="f['images'].errors['maxImageSize']">
-          Максимальный размер изображения: 3MB
-        </div>
-      </div>
-
-      <div class="upload-hints">
-        <small
-          >Максимум {{ MAX_IMAGE_COUNT }} изображений, каждое не более
-          3MB</small
-        >
-      </div>
-
-      <div class="image-preview-container" *ngIf="previewUrls.length > 0">
-        <h3>
-          Предпросмотр изображений ({{ previewUrls.length }}/{{
-            MAX_IMAGE_COUNT
-          }}):
-        </h3>
-        <div class="image-preview-grid">
-          <div
-            class="image-preview"
-            *ngFor="let url of previewUrls; let i = index"
-          >
-            <img [src]="url" alt="Превью изображения" />
-            <button
-              type="button"
-              class="remove-image-btn"
-              (click)="removeImage(i)"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="form-actions">
-      <button type="submit" class="submit-btn">Добавить автомобиль</button>
+      <button type="submit" class="submit-btn">Изменить автомобиль</button>
       <button type="button" class="reset-btn" (click)="onReset()">
         Очистить форму
       </button>

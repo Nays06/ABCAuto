@@ -17,7 +17,7 @@ export class ProfileComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   goToAddCar() {
-    this.router.navigate(['/addCar']);
+    this.router.navigate(['/car/add']);
   }
 
   checkAuthAndRedirect(): void {

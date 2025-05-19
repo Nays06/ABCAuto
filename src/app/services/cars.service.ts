@@ -20,4 +20,16 @@ export class CarsService {
   addCar(newCar: any) {
     return this.http.post(`${this.apiUrl}/add`, newCar)
   }
+
+  getCarDetails(id: String) {
+    return this.http.get(`${this.apiUrl}/car/${id}`)
+  }
+  
+  editCarData(id: String, data: any) {
+    return this.http.patch(`${this.apiUrl}/car/${id}`, data)
+  }
+  
+  deleteCar(id: String) {
+    return this.http.delete(`${this.apiUrl}/car/${id}`)
+  }
 }

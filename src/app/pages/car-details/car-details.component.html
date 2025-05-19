@@ -1,0 +1,108 @@
+<div class="car-details-container">
+  <div class="car-header">
+    <div>
+      <h1 class="car-title">{{ car.brand }} {{ car.model }}</h1>
+      <div class="actions" *ngIf="isCurrentUserCar">
+        <button class="edit-btn" (click)="goToEdit()">Изменить</button>
+        <button class="delete-btn" (click)="deleteCar()">Удалить</button>
+      </div>
+    </div>
+    <div class="car-price">{{ formatPrice(car.price) }} ₽</div>
+  </div>
+
+  <div class="car-content">
+    <div class="car-images">
+      <div class="main-image">
+        <img
+          [src]="car.images[0].slice(0, car.images[0].indexOf('\\')) === 'uploads' ? `http://localhost:5555/${car.images[currentImageIndex]}` : car.images[currentImageIndex]"
+          alt="{{ car.brand }} {{ car.model }}"
+          *ngIf="car.images?.length > 0"
+        />
+      </div>
+      <div class="thumbnail-container" *ngIf="car.images?.length > 1">
+        <div class="thumbnail" *ngFor="let image of car.images; let i = index" [class.active]="i === currentImageIndex">
+          <img
+            [src]="image.slice(0, image.indexOf('\\')) === 'uploads' ? `http://localhost:5555/${image}` : image"
+            alt="{{ car.brand }} {{ car.model }} - image {{ i + 1 }}"
+            (click)="changeMainImage(i)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="car-info">
+      <div class="info-section">
+        <h2>Основные характеристики</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Год выпуска</span>
+            <span class="info-value">{{ car.year }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Двигатель</span>
+            <span class="info-value">{{ car.engine }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Трансмиссия</span>
+            <span class="info-value">{{ car.transmission }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Пробег</span>
+            <span class="info-value">{{ car.mileage }} км</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Тип топлива</span>
+            <span class="info-value">{{ car.fuelType }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Цвет</span>
+            <span class="info-value">{{ car.color }}</span>
+          </div>
+          <div class="info-item" *ngIf="car.horsepower">
+            <span class="info-label">Мощность</span>
+            <span class="info-value">{{ car.horsepower }} л.с.</span>
+          </div>
+          <div class="info-item" *ngIf="car.country">
+            <span class="info-label">Страна</span>
+            <span class="info-value">{{ car.country }}</span>
+          </div>
+          <div class="info-item" *ngIf="car.driveType">
+            <span class="info-label">Привод</span>
+            <span class="info-value">{{ car.driveType }}</span>
+          </div>
+          <div class="info-item" *ngIf="car.bodyType">
+            <span class="info-label">Тип кузова</span>
+            <span class="info-value">{{ car.bodyType }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="car.sellerId">
+        <h2>Описание</h2>
+        <div class="description">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vitae
+          numquam ea aspernatur illo, impedit architecto ab iure exercitationem
+          pariatur et dolor ut voluptates ipsam sed minima! Obcaecati, fugit
+          voluptatibus. Suscipit adipisci dolores nulla nesciunt illum explicabo
+          labore architecto dignissimos ut, vero iusto et, vitae, perferendis
+          deserunt itaque perspiciatis dolore obcaecati eius. Quasi esse sed
+          ullam tempore nobis sint molestiae!
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="car.sellerId">
+        <h2>Информация о продавце</h2>
+        <div class="seller-info">
+          <div class="info-item">
+            <span class="info-label">Продавец</span>
+            <span class="info-value">ID: {{ car.sellerId }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Дата публикации</span>
+            <span class="info-value">{{ car.registrationDate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
