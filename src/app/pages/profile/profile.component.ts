@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf } from '@angular/common';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
 import { Router } from '@angular/router';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-profile',
@@ -13,8 +14,13 @@ import { Router } from '@angular/router';
 })
 export class ProfileComponent {
   user: any = {};
+  allFavorites = [];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private favoriteService: FavoritesService
+  ) {}
 
   goToAddCar() {
     this.router.navigate(['/car/add']);
@@ -43,13 +49,22 @@ export class ProfileComponent {
 
   ngOnInit() {
     this.checkAuthAndRedirect();
+
     this.authService.userProfile().subscribe(
       (res: any) => {
-        console.log(res);
         this.user = res.data;
         this.user.registrationDate = this.formatRussianDate(
           this.user.registrationDate
         );
+      },
+      (err: any) => {
+        console.error(err);
+      }
+    );
+
+    this.favoriteService.getFavorites().subscribe(
+      (res: any) => {
+        this.allFavorites = res.favorites;
       },
       (err: any) => {
         console.error(err);

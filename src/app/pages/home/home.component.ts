@@ -4,6 +4,7 @@ import { CarsService } from '../../services/cars.service';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
 import { FilterComponent } from '../../components/filter/filter.component';
 import { NgFor } from '@angular/common';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-home',
@@ -15,33 +16,46 @@ export class HomeComponent {
   brand = '';
   priceMin: any = 0;
   priceMax: any = 0;
-  cars = []
+  cars = [];
   compilations = [
     {
-      imgSrc: "./assets/img/pages/home/compilation1.jpg",
-      title: "Семейные автомобили",
-      compilation: "family"
+      imgSrc: './assets/img/pages/home/compilation1.jpg',
+      title: 'Семейные автомобили',
+      compilation: 'family',
     },
     {
-      imgSrc: "./assets/img/pages/home/compilation2.jpg",
-      title: "Автомобили для путешествий",
-      compilation: "journey"
+      imgSrc: './assets/img/pages/home/compilation2.jpg',
+      title: 'Автомобили для путешествий',
+      compilation: 'journey',
     },
     {
-      imgSrc: "./assets/img/pages/home/compilation3.jpg",
-      title: "Городские автомобили",
-      compilation: "city"
+      imgSrc: './assets/img/pages/home/compilation3.jpg',
+      title: 'Городские автомобили',
+      compilation: 'city',
     },
-  ]
+  ];
+  allFavorites = [];
 
   private _carService: CarsService;
 
-  constructor(CarsService: CarsService) {
+  constructor(
+    CarsService: CarsService,
+    private favoriteService: FavoritesService
+  ) {
     this._carService = CarsService;
   }
-  
+
   ngOnInit() {
     this.getCars();
+
+    this.favoriteService.getFavorites().subscribe(
+      (res: any) => {
+        this.allFavorites = res.favorites;
+      },
+      (err: any) => {
+        console.error(err);
+      }
+    );
   }
 
   onFilterChanged(filterValues: any) {
@@ -53,8 +67,6 @@ export class HomeComponent {
   getCars() {
     this._carService.getCars().subscribe(
       (response: any) => {
-        console.log(response);
-        
         this.cars = response;
       },
       (error) => {
@@ -62,5 +74,4 @@ export class HomeComponent {
       }
     );
   }
-
 }

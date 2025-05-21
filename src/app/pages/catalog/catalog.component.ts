@@ -35,8 +35,6 @@ export class CatalogComponent {
   getCars() {
     this._carService.getCars().subscribe(
       (response: any) => {
-        console.log(response);
-        
         this.cars = response;
       },
       (error) => {

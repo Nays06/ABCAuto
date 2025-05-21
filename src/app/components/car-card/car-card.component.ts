@@ -2,6 +2,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-car-card',
@@ -11,8 +12,18 @@ import { HotToastService } from '@ngxpert/hot-toast';
 })
 export class CarCardComponent {
   @Input() car: any = {};
+  @Input() favorites: any = [];
+  isFavorite: boolean = false;
 
-  constructor(private toast: HotToastService, private router: Router) {}
+  constructor(
+    private toast: HotToastService,
+    private router: Router,
+    private favoriteService: FavoritesService
+  ) {}
+
+  ngOnInit() {
+    this.isFavorite = this.favorites?.includes(this.car._id)
+  }
 
   showToast() {
     this.toast.error(this.car._id);
@@ -57,7 +68,45 @@ export class CarCardComponent {
     );
   }
 
+  getImageSrc(): string {
+    let imageIndex = this.currentSlideIndex;
+
+    if (this.shouldShowRemaining()) {
+      imageIndex = this.maxVisibleSlides - 1;
+    }
+
+    const imagePath = this.car.images[imageIndex];
+    return imagePath.slice(0, imagePath.indexOf('\\')) === 'uploads'
+      ? `http://localhost:5555/${imagePath}`
+      : imagePath;
+  }
+
   formatPrice(price: number): string {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+
+  toggleFavorite(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!this.isFavorite) {
+      this.favoriteService.addToFavorite(this.car._id).subscribe(
+        (res: any) => {
+          this.isFavorite = true;
+        },
+        (err: any) => {
+          console.error(err);
+        }
+      );
+    } else {
+      this.favoriteService.removeFromFavorites(this.car._id).subscribe(
+        (res: any) => {
+          this.isFavorite = false;
+        },
+        (err: any) => {
+          console.error(err);
+        }
+      );
+    }
   }
 }

@@ -65,7 +65,6 @@ export class LoginComponent {
     if (this.authForm.valid) {
       this.authService.loginUser(this.authForm.value).subscribe({
         next: (res: any) => {
-          console.log(res);
           localStorage.setItem("token", res.token)
           this.authService.loadUserAvatar();
           this.route.navigateByUrl("/profile")

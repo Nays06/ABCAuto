@@ -41,8 +41,6 @@ export class EditCarComponent {
         (res: any) => {
           this.car = res.data;
           this.carForm.patchValue(this.car)
-          console.log(this.car);
-          
         },
         (err: any) => {
           console.error(err);

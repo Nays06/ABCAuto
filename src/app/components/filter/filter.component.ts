@@ -41,12 +41,6 @@ export class FilterComponent {
     };
     this.filterChanged.emit(this.filterValues);
   }
-
-  log(){
-    console.log(123);
-    
-  }
-
   ngOnInit() {
     this.getBrands();
   }

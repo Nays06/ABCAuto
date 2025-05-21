@@ -1,7 +1,7 @@
 .filter {
   width: fit-content;
   border-radius: 11px;
-  background-color: #eff0f0;
+  background-color: var(--secondary-color);
   padding: 25px 30px;
   display: flex;
   margin: 0 auto;

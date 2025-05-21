@@ -20,7 +20,11 @@
         />
       </div>
       <div class="thumbnail-container" *ngIf="car.images?.length > 1">
-        <div class="thumbnail" *ngFor="let image of car.images; let i = index" [class.active]="i === currentImageIndex">
+        <div
+          class="thumbnail"
+          *ngFor="let image of car.images; let i = index"
+          [class.active]="i === currentImageIndex"
+        >
           <img
             [src]="image.slice(0, image.indexOf('\\')) === 'uploads' ? `http://localhost:5555/${image}` : image"
             alt="{{ car.brand }} {{ car.model }} - image {{ i + 1 }}"
@@ -90,17 +94,65 @@
         </div>
       </div>
 
-      <div class="info-section" *ngIf="car.sellerId">
+      <div class="info-section" *ngIf="car.sellerId && seller">
         <h2>Информация о продавце</h2>
         <div class="seller-info">
-          <div class="info-item">
-            <span class="info-label">Продавец</span>
-            <span class="info-value">ID: {{ car.sellerId }}</span>
+          <!-- Аватар и основная информация -->
+          <div class="seller-main-info">
+            <img
+              *ngIf="seller.avatar"
+              [src]="`http://localhost:5555/${seller.avatar}`"
+              alt="Аватар продавца"
+              class="seller-avatar"
+            />
+            <div class="seller-name">
+              <span class="info-value"
+                >{{ seller.name }} {{ seller.surname }}</span
+              >
+              <span *ngIf="seller.registrationDate" class="seller-since">
+                На сайте с {{ seller.registrationDate | date : "yyyy" }} года
+              </span>
+            </div>
           </div>
+
+          <!-- Контактная информация -->
+          <div class="info-item">
+            <span class="info-label">Контактные данные</span>
+            <span class="info-value">{{ seller.email }}</span>
+          </div>
+
+          <!-- Дополнительная информация -->
+          <div class="info-item" *ngIf="seller.reviews.length">
+            <span class="info-label">Отзывы</span>
+            <span class="info-value">{{ seller.reviews.length }} отзывов</span>
+          </div>
+
           <div class="info-item">
             <span class="info-label">Дата публикации</span>
-            <span class="info-value">{{ car.registrationDate }}</span>
+            <span class="info-value">{{
+              car.registrationDate | date : "dd.MM.yyyy"
+            }}</span>
           </div>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="car.sellerId && seller">
+        <h2>Спросите у продавца</h2>
+
+        <div class="messages">
+          <textarea
+            [(ngModel)]="message"
+            autoResize
+            style="
+              overflow: hidden;
+              resize: none;
+            "
+          ></textarea>
+
+          <div class="message-hints">
+            <div *ngFor="let messageHint of messageHints" (click)="useHint(messageHint)">{{ messageHint }}</div>
+          </div>
+          <button (click)="qwe()">123123</button>
         </div>
       </div>
     </div>

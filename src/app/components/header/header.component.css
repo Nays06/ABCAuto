@@ -1,5 +1,5 @@
 .header-top {
-  background-color: #eff0f0;
+  background-color: var(--secondary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,6 +79,7 @@ nav ul li a.active {
 
 .header-actions {
   display: flex;
+  align-items: center;
 
   & > div {
     position: relative;

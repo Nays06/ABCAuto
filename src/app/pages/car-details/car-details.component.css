@@ -2,7 +2,7 @@
   width: 80%;
   margin: 0 auto;
   padding: 2rem 0;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #333;
 }
 
@@ -44,7 +44,7 @@
 .edit-btn {
   background-color: #1e6ebe;
   transition: 0.3s;
-  
+
   &:hover {
     background-color: #1b5ea1;
   }
@@ -132,7 +132,7 @@
 
 .info-section {
   margin-bottom: 2rem;
-  background: #f9f9f9;
+  background: var(--secondary-color);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -173,7 +173,58 @@
 .seller-info {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  row-gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.seller-main-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.seller-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.seller-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.seller-since {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.messages {
+  textarea {
+    min-width: 100%;
+    max-width: 100%;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+}
+
+.message-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+
+   & > div {
+    padding: 7px 10px;
+    background-color: var(--primary-color);
+    border-radius: 12px;
+    color: white;
+    user-select: none;
+    cursor: pointer;
+  }
 }
 
 @media (max-width: 992px) {
@@ -181,7 +232,8 @@
     flex-direction: column;
   }
 
-  .info-grid, .seller-info {
+  .info-grid,
+  .seller-info {
     grid-template-columns: 1fr;
   }
 }

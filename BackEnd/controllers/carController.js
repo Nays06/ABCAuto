@@ -1,5 +1,6 @@
 const Brands = require("../models/Brands");
 const Car = require("../models/Car");
+const User = require("../models/User");
 
 class CarController {
   async getBrands(req, res) {
@@ -91,7 +92,8 @@ class CarController {
     try {
       const id = req.params.id;
       const car = await Car.findById(id);
-      res.status(200).json({ message: "Успешно!", data: car });
+      const seller = await User.findById(car.sellerId)
+      res.status(200).json({ message: "Успешно!", carData: car, sellerData: seller });
     } catch (err) {
       console.log(err);
       res.status(400).json({ message: "Ошибка получения автомобиля" });

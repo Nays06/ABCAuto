@@ -5,7 +5,7 @@
 <app-filter />
 
 <div class="cars">
-  <app-car-card *ngFor="let car of cars" [car]="car" />
+  <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites" />
 </div>
 
 <div class="section">

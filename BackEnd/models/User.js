@@ -9,6 +9,7 @@ const User = new Schema({
     roles: [{ type: String, ref: "Role" }],
     registrationDate: { type: Date, default: Date.now },
     reviews: { type: Array, default: [] },
+    favorites: { type: Array, default: [] },
 })
 
 module.exports = model("Users", User)

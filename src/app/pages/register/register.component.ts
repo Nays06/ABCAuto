@@ -122,7 +122,6 @@ export class RegisterComponent {
 
       this.authService.registerUser(formData).subscribe({
         next: (res: any) => {
-          console.log(res);
           localStorage.setItem("token", res.token)
           this.authService.loadUserAvatar();
           this.route.navigateByUrl("/profile")

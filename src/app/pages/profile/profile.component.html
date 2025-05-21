@@ -49,7 +49,7 @@
     <button class="btn-add-car" (click)="goToAddCar()">Добавить автомобиль</button>
     @if (user.adsCount > 0) {
       <div class="cars">
-        <app-car-card *ngFor="let car of user.ads" [car]="car" />
+        <app-car-card *ngFor="let car of user.ads" [car]="car" [favorites]="allFavorites" />
     </div>
     } @else {
       <div class="no-ads">

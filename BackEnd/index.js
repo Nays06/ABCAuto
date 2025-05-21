@@ -3,6 +3,8 @@ const cors = require('cors')
 const { default: mongoose } = require("mongoose");
 const authRoute = require("./routes/authRoute")
 const carRoute = require("./routes/carRoute");
+const favoriteRoute = require("./routes/favoriteRoute");
+const chatRoute = require("./routes/chatRoute");
 
 require('dotenv').config();
 
@@ -15,6 +17,8 @@ app.use(cors())
 app.use(express.json())
 app.use('/auth' , authRoute)
 app.use('/cars', carRoute)
+app.use('/favorites', favoriteRoute)
+app.use('/chat', chatRoute)
 app.use("/uploads" , express.static("uploads"))
 app.use("/static" , express.static("static"))
 
