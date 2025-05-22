@@ -69,8 +69,7 @@ export class CarDetailsComponent {
   ]
 
   qwe() {
-    console.log(this.message.trim());
-    this.chatService.sendMessage({ advertisementId: this.car._id, buyerId: this.myId, sellerId: this.car.sellerId, senderId: this.myId, recipientId: this.car.sellerId, content: this.message })
+    this.chatService.sendMessageWithOutChatId({ advertisementId: this.car._id, buyerId: this.myId, sellerId: this.car.sellerId, senderId: this.myId, recipientId: this.car.sellerId, content: this.message.trim() })
   }
 
   useHint(messageHint: String) {

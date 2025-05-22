@@ -64,7 +64,7 @@ class chatController {
   }
 
   async getUserChats(req, res) {
-    const { userId } = req.params;
+    const userId = req.user.id;
 
     try {
       const chats = await Chat.find({

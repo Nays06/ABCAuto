@@ -7,6 +7,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { AddCarComponent } from './pages/add-car/add-car.component';
 import { CarDetailsComponent } from './pages/car-details/car-details.component';
 import { EditCarComponent } from './pages/edit-car/edit-car.component';
+import { ChatComponent } from './pages/chat/chat.component';
 
 export const routes: Routes = [
     { path: "", component: HomeComponent },
@@ -17,4 +18,5 @@ export const routes: Routes = [
     { path: "car/add", component: AddCarComponent },
     { path: "car/:id", component: CarDetailsComponent },
     { path: "car/edit/:id", component: EditCarComponent },
+    { path: "chat/:id", component: ChatComponent },
 ];

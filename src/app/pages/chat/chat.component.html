@@ -1,0 +1,35 @@
+<div class="chat-container">
+    <!-- Заголовок чата -->
+    <div class="chat-header">
+      Чат #{{ id }}
+    </div>
+    
+    <!-- Область сообщений -->
+    <div class="messages-container">
+      <div *ngFor="let message of chat" class="message-wrapper">
+        <div class="message" [class.outgoing]="message.senderId === currentUserId" [class.incoming]="message.senderId !== currentUserId">
+          <div class="message-content">
+            {{ message.content }}
+            <div class="message-meta">
+              {{ message.createdAt | date:'shortTime' }}
+              <span *ngIf="message.isRead">✓✓</span>
+              <span *ngIf="!message.isRead">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Панель ввода -->
+    <div class="input-container">
+      <input type="text" 
+             [(ngModel)]="message" 
+             (keyup.enter)="sendMessage()"
+             placeholder="Введите сообщение..."
+             class="message-input">
+      
+      <button (click)="sendMessage()" class="send-button">
+        Отправить
+      </button>
+    </div>
+  </div>
