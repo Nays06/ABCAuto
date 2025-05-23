@@ -32,11 +32,15 @@ export class ChatService {
     return this.http.post(`${this.apiUrl}/messages`, { chatId: data.chatId, senderId: data.senderId, recipientId: data.recipientId, content: data.content })
   }
 
+  getChat(chatId: string) {
+    return this.http.get(`${this.apiUrl}/chats/${chatId}`)
+  }
+
   getChats() {
     return this.http.get(`${this.apiUrl}/chats`)
   }
 
-  getChat(chatId: String) {
+  getChatMessages(chatId: String) {
     return this.http.get(`${this.apiUrl}/messages/${chatId}`)
   }
 }

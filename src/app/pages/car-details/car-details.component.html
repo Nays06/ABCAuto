@@ -97,7 +97,6 @@
       <div class="info-section" *ngIf="car.sellerId && seller">
         <h2>Информация о продавце</h2>
         <div class="seller-info">
-          <!-- Аватар и основная информация -->
           <div class="seller-main-info">
             <img
               *ngIf="seller.avatar"
@@ -115,13 +114,11 @@
             </div>
           </div>
 
-          <!-- Контактная информация -->
           <div class="info-item">
             <span class="info-label">Контактные данные</span>
             <span class="info-value">{{ seller.email }}</span>
           </div>
 
-          <!-- Дополнительная информация -->
           <div class="info-item" *ngIf="seller.reviews.length">
             <span class="info-label">Отзывы</span>
             <span class="info-value">{{ seller.reviews.length }} отзывов</span>
@@ -143,14 +140,16 @@
           <textarea
             [(ngModel)]="message"
             autoResize
-            style="
-              overflow: hidden;
-              resize: none;
-            "
+            style="overflow: hidden; resize: none"
           ></textarea>
 
           <div class="message-hints">
-            <div *ngFor="let messageHint of messageHints" (click)="useHint(messageHint)">{{ messageHint }}</div>
+            <div
+              *ngFor="let messageHint of messageHints"
+              (click)="useHint(messageHint)"
+            >
+              {{ messageHint }}
+            </div>
           </div>
           <button (click)="qwe()">Отправить</button>
         </div>
