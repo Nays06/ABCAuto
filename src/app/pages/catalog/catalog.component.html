@@ -1,8 +1,9 @@
 <app-filter (filterChanged)="onFilterChanged($event)"></app-filter>
 
-<!-- <h1>{{ brand }}</h1>
-<h1>{{ priceMin }} - {{ priceMax }}</h1> -->
+<h1>{{ brand }}</h1>
+<h1>{{ priceMin }} - {{ priceMax }}</h1>
+<h1>{{ bodyType }} {{ driveType }}</h1>
 
 <div class="cars">
-    <app-car-card *ngFor="let car of cars" [car]="car" />
+  <app-car-card *ngFor="let car of cars" [car]="car" />
 </div>

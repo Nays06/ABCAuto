@@ -24,20 +24,30 @@
         </div>
     </div>
     <div class="specifications-additionals">
-        <select name="" id="">
-            <option value="" disabled selected hidden>Тип кузова</option>
-            <option value="">Яблоко</option>
-            <option value="">Банан</option>
-            <option value="">Груша</option>
-        </select>
-        <select name="" id="">
-            <option value="" disabled selected hidden>Коробка</option>
-            <option value="">Яблоко</option>
-            <option value="">Банан</option>
-            <option value="">Груша</option>
-        </select>
+        
+<div class="custom-select">
+  <ng-select
+    [items]="bodyTypes"
+    bindLabel="name"
+    placeholder="Тип кузова"
+    [(ngModel)]="bodyTypeModel"
+    (change)="applyFilter()"
+  >
+  </ng-select>
+</div>
+
+<div class="custom-select">
+  <ng-select
+    [items]="driveTypes"
+    bindLabel="name"
+    placeholder="Коробка"
+    [(ngModel)]="driveTypeModel"
+    (change)="applyFilter()"
+  >
+  </ng-select>
+</div>
     </div>
 
-    <button>Показать</button>
+    <button (click)="log()">Показать</button>
   </div>
 </div>

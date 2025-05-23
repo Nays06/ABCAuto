@@ -2,21 +2,63 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarsService } from '../../services/cars.service';
 import { NgFor } from '@angular/common';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-filter',
-  imports: [FormsModule, NgFor],
+  imports: [FormsModule, NgFor, NgSelectModule],
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.css']
+  styleUrls: ['./filter.component.css'],
 })
 export class FilterComponent {
   brands: any[] = [];
   filterValues = {
-    brand: '',
-    priceRange: { min: 0, max: 1000000 }
+    brand: null,
+    priceRange: { min: 0, max: 1000000 },
+    driveType: { name: "" },
+    bodyType: { name: "" },
   };
+  filterQuery = '';
+  driveTypes = [
+    { name: 'AWD' },
+    { name: 'FWD' },
+    { name: '4WD' },
+    { name: 'RWD' },
+  ];
+  bodyTypes = [
+    { name: 'SUV' },
+    { name: 'Sedan' },
+    { name: 'Coupe' },
+    { name: 'Pickup' },
+    { name: 'Crossover' },
+    { name: 'Hatchback' },
+    { name: 'Wagon' },
+    { name: 'Van' },
+    { name: 'Truck' },
+    { name: 'Convertible' },
+  ];
 
-  
+  get bodyTypeModel() {
+  return this.filterValues.bodyType.name || null;
+}
+
+set bodyTypeModel(value: any) {
+  this.filterValues.bodyType = value;
+}
+
+  get driveTypeModel() {
+  return this.filterValues.driveType.name || null;
+}
+
+set driveTypeModel(value: any) {
+  this.filterValues.driveType = value;
+}
+
+
+  log() {
+    console.log(this.filterQuery);
+  }
+
   private _carService: CarsService;
 
   constructor(CarsService: CarsService) {
@@ -25,24 +67,30 @@ export class FilterComponent {
 
   @Output() filterChanged = new EventEmitter<any>();
 
-  selectBrand(brand: any){
-    this.filterValues.brand = brand
-    this.applyFilter()
+  selectBrand(brand: any) {
+    this.filterValues.brand = brand;
+    this.applyFilter();
   }
 
   applyFilter() {
+    this.buildFilterQuery();
     this.filterChanged.emit(this.filterValues);
   }
 
   resetFilter() {
     this.filterValues = {
-      brand: '',
-      priceRange: { min: 0, max: 1000 }
+      brand: null,
+      priceRange: { min: 0, max: 1000 },
+      driveType: { name: "" },
+      bodyType: { name: "" },
     };
+    this.buildFilterQuery();
     this.filterChanged.emit(this.filterValues);
   }
+
   ngOnInit() {
     this.getBrands();
+    this.applyFilter();
   }
 
   getBrands() {
@@ -54,5 +102,36 @@ export class FilterComponent {
         console.log(error);
       }
     );
+  }
+
+  private buildFilterQuery() {
+    const queryParts = [];
+
+    if (this.filterValues.brand) {
+      queryParts.push(`brand=${encodeURIComponent(this.filterValues.brand)}`);
+    }
+
+    if (
+      this.filterValues.priceRange.min !== 0 ||
+      this.filterValues.priceRange.max !== 0
+    ) {
+      queryParts.push(
+        `price=${this.filterValues.priceRange.min}-${this.filterValues.priceRange.max}`
+      );
+    }
+
+    if (this.filterValues.driveType.name) {
+      queryParts.push(
+        `driveType=${encodeURIComponent(this.filterValues.driveType.name)}`
+      );
+    }
+
+    if (this.filterValues.bodyType.name) {
+      queryParts.push(
+        `bodyType=${encodeURIComponent(this.filterValues.bodyType.name)}`
+      );
+    }
+
+    this.filterQuery = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
   }
 }

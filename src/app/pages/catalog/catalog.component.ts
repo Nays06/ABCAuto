@@ -11,9 +11,11 @@ import { NgFor } from '@angular/common';
   styleUrl: './catalog.component.css',
 })
 export class CatalogComponent {
-  brand = '';
+  brand: any = '';
   priceMin: any = 0;
   priceMax: any = 0;
+  driveType = ""
+  bodyType = ""
   cars = []
 
   private _carService: CarsService;
@@ -27,9 +29,13 @@ export class CatalogComponent {
   }
 
   onFilterChanged(filterValues: any) {
+    console.log(filterValues);
+    
     this.brand = filterValues.brand;
     this.priceMin = filterValues.priceRange.min;
     this.priceMax = filterValues.priceRange.max;
+    this.driveType = filterValues.driveType
+    this.bodyType = filterValues.bodyType
   }
 
   getCars() {

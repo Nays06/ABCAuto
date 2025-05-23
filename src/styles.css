@@ -1,9 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Unbounded:wght@200..900&display=swap');
+@import "../node_modules/@ng-select/ng-select/themes/default.theme.css";
 
 :root {
   --primary-color: #CA0100;
   --secondary-color: #eff0f0;
   --primary-color-hover: #ad0000;
+  --primary-color-light: #f53636a2;
+  --primary-color-light-hover: #f35e5e6e;
 }
 
 * {
@@ -35,4 +38,16 @@ img {
 @keyframes driveLeft {
   0% { transform: translateX(calc(100vw + 100px)) translateY(0); }
   100% { transform: translateX(-100px) translateY(0); }
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected, .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked {
+  background-color: var(--primary-color-light);
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background-color: var(--primary-color-light-hover);
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container{ 
+  border-color: var(--primary-color);
 }

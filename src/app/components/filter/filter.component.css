@@ -143,3 +143,65 @@
     font-style: italic;
   }
 }
+
+.custom-select {
+  width: 49%;
+}
+
+::ng-deep .custom-select .ng-select.ng-select-single .ng-select-container {
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep
+  .custom-select
+  .ng-select.ng-select-single
+  .ng-select-container
+  .ng-input {
+  height: 100%;
+}
+
+::ng-deep
+  .custom-select
+  .ng-select.ng-select-single
+  .ng-select-container
+  .ng-input
+  input {
+  height: 100%;
+}
+
+::ng-deep
+  .custom-select
+  .ng-select.ng-select-single
+  .ng-select-container
+  .ng-value-container
+  .ng-input {
+  top: 0;
+}
+
+::ng-deep .ng-dropdown-panel .scroll-host {
+  ::ng-deep .ng-dropdown-panel .scroll-host&::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::ng-deep .ng-dropdown-panel .scroll-host&::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  ::ng-deep .ng-dropdown-panel .scroll-host&::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 20px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #555;
+    }
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) #f1f1f1;
+  border-radius: 4px;
+}

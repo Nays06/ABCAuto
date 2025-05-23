@@ -18,8 +18,33 @@ class CarController {
       const limit = req.query.limit || 12;
       const page = req.query.page || 1;
       const skip = (page - 1) * limit;
+      const brand = req.query.brand;
+      const driveType = req.query.driveType;
+      const bodyType = req.query.bodyType;
+
+      const filter = {};
+
+      if (brand) {
+        filter.brand = brand;
+      }
+
+      if (req.query.price) {
+        const [priceFrom, priceTo] = req.query.price.split("-").map(Number);
+        filter.price = {};
+        if (!isNaN(priceFrom)) filter.price.$gte = priceFrom;
+        if (!isNaN(priceTo)) filter.price.$lte = priceTo;
+      }
+
+      if (driveType) {
+        filter.driveType = driveType;
+      }
+
+      if (bodyType) {
+        filter.bodyType = bodyType;
+      }
 
       const cars = await Car.aggregate([
+        { $match: filter },
         { $sample: { size: limit } },
         { $skip: skip },
       ]);
@@ -30,7 +55,6 @@ class CarController {
       res.status(500).json({ message: "Ошибка на сервере" });
     }
   }
-
   async addCar(req, res) {
     try {
       const {
@@ -92,8 +116,10 @@ class CarController {
     try {
       const id = req.params.id;
       const car = await Car.findById(id);
-      const seller = await User.findById(car.sellerId)
-      res.status(200).json({ message: "Успешно!", carData: car, sellerData: seller });
+      const seller = await User.findById(car.sellerId);
+      res
+        .status(200)
+        .json({ message: "Успешно!", carData: car, sellerData: seller });
     } catch (err) {
       console.log(err);
       res.status(400).json({ message: "Ошибка получения автомобиля" });
@@ -104,12 +130,14 @@ class CarController {
     try {
       const id = req.params.id;
 
-      const carCheck = await Car.findById(id)
+      const carCheck = await Car.findById(id);
 
-      if(carCheck.sellerId !== req.user.id) {
-        return res.status(400).json({ message: "У вас нет прав для изменения этого автомобиля" });
+      if (carCheck.sellerId !== req.user.id) {
+        return res
+          .status(400)
+          .json({ message: "У вас нет прав для изменения этого автомобиля" });
       }
-      
+
       const {
         horsepower,
         country,
@@ -156,10 +184,12 @@ class CarController {
     try {
       const id = req.params.id;
 
-      const carCheck = await Car.findById(id)
+      const carCheck = await Car.findById(id);
 
-      if(carCheck.sellerId !== req.user.id) {
-        return res.status(400).json({ message: "У вас нет прав для удаления этого автомобиля" });
+      if (carCheck.sellerId !== req.user.id) {
+        return res
+          .status(400)
+          .json({ message: "У вас нет прав для удаления этого автомобиля" });
       }
 
       await Car.findByIdAndDelete({ _id: id });
