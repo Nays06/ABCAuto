@@ -1,0 +1,23 @@
+<div class="chat-list">
+  <div *ngFor="let chat of chats" class="chat-item" (click)="openChat(chat._id)">
+    <!-- Фото авто -->
+    <img [src]="chat.advertisementId.images[0]" alt="Фото авто" class="car-image" />
+
+    <div class="chat-info">
+      <!-- Название авто -->
+      <div class="car-title">
+        {{ chat.advertisementId.brand }} {{ chat.advertisementId.model }}
+      </div>
+
+      <!-- Имя собеседника -->
+      <div class="sender-name">
+        {{ chat.lastMessage.senderId.name }} {{ chat.lastMessage.senderId.surname }}
+      </div>
+
+      <!-- Последнее сообщение -->
+      <div class="last-message">
+        {{ chat.lastMessage.content }}
+      </div>
+    </div>
+  </div>
+</div>

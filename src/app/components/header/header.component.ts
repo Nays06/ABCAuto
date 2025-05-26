@@ -1,26 +1,53 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { FavoritesService } from '../../services/favorites.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, NgIf],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
   isDropdownOpen = false;
   avatarUrl: any = '';
+  favoriteCount = 0;
+  isAuthenticated = false;
 
   @ViewChild('dropdown') dropdown!: ElementRef;
   @ViewChild('avatar') avatar!: ElementRef;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private favoriteService: FavoritesService
+  ) {}
 
-ngOnInit() {
-    this.authService.currentAvatar$.subscribe(avatar => {
-      this.avatarUrl = avatar;
+  ngOnInit() {
+    this.authService.currentAvatar$.subscribe((avatar) => {
+      if(avatar) {
+        this.avatarUrl = avatar;
+        this.isAuthenticated = true
+      } else {
+        this.isAuthenticated = false
+      }
     });
+
+    this.favoriteService.favoritesCount$.subscribe((count) => {
+      this.favoriteCount = count;
+    });
+
+    this.authService.getUserID().subscribe(
+      (res: any) => {
+        this.isAuthenticated =  !res.isNotExists
+      },
+      (err: any) => {
+        console.log(err);
+        this.isAuthenticated = false
+      }
+    );
 
     this.authService.loadUserAvatar();
   }
@@ -42,27 +69,11 @@ ngOnInit() {
     localStorage.removeItem('token');
     this.router.navigate(['/register']);
     this.isDropdownOpen = false;
+    this.isAuthenticated = false
   }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  get isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    return token ? this.isTokenValid(token) : false;
-  }
-
-  private isTokenValid(token: string): boolean {
-    try {
-      const payloadBase64 = token.split('.')[1];
-      const decoded = JSON.parse(atob(payloadBase64));
-      const exp = decoded.exp;
-
-      return Date.now() < exp * 1000;
-    } catch (e) {
-      return false;
-    }
   }
 
   @HostListener('document:click', ['$event'])

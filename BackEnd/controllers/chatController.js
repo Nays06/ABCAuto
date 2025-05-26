@@ -70,20 +70,26 @@ class chatController {
     }
   }
 
-  async getUserChats(req, res) {
-    const userId = req.user.id;
+async getUserChats(req, res) {
+  const userId = req.user.id;
 
-    try {
-      const chats = await Chat.find({
-        $or: [{ buyerId: userId }, { sellerId: userId }],
-      }).sort({ updatedAt: -1 });
+  try {
+    const chats = await Chat.find({
+      $or: [{ buyerId: userId }, { sellerId: userId }],
+    })
+      .sort({ updatedAt: -1 })
+      .limit(20)
+      .populate('advertisementId', 'images brand model price')
+      .populate('buyerId', 'avatar name surname')
+      .populate('sellerId', 'avatar name surname')
+      .populate('lastMessage.senderId', 'avatar name surname');
 
-      res.status(200).json(chats);
-    } catch (error) {
-      res.status(500).json({ error: "Ошибка при получении чатов" });
-      console.log(error);
-    }
+    res.status(200).json(chats);
+  } catch (error) {
+    res.status(500).json({ error: "Ошибка при получении чатов" });
+    console.log(error);
   }
+}
 
   async getChatToId(req, res) {
     try {

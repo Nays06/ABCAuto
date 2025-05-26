@@ -180,28 +180,29 @@
   top: 0;
 }
 
-::ng-deep .ng-dropdown-panel .scroll-host {
-  ::ng-deep .ng-dropdown-panel .scroll-host&::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
+::ng-deep .custom-select .ng-dropdown-panel .scroll-host::-webkit-scrollbar {
+  width: 7px;
+}
 
-  ::ng-deep .ng-dropdown-panel .scroll-host&::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
+::ng-deep
+  .custom-select
+  .ng-dropdown-panel
+  .scroll-host::-webkit-scrollbar-track {
+  background: var(--secondary-color);
+  /* border-radius: 6px; */
+}
 
-  ::ng-deep .ng-dropdown-panel .scroll-host&::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 20px;
-    transition: background 0.2s;
+::ng-deep
+  .custom-select
+  .ng-dropdown-panel
+  .scroll-host::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 6px;
+}
 
-    &:hover {
-      background: #555;
-    }
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary-color) #f1f1f1;
-  border-radius: 4px;
+::ng-deep
+  .custom-select
+  .ng-dropdown-panel
+  .scroll-host::-webkit-scrollbar-thumb:hover {
+  background: #1f4ae6;
 }

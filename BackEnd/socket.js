@@ -1,4 +1,6 @@
 let io = null;
+const User = require("./models/User");
+const activeUsers = new Map();
 
 module.exports = {
   init: (server) => {
@@ -6,20 +8,61 @@ module.exports = {
     io = new Server(server, {
       cors: {
         origin: "*",
-        methods: ["GET", "POST"]
-      }
+        methods: ["GET", "POST"],
+      },
     });
 
     io.on("connection", (socket) => {
-      console.log("📡 Клиент подключён");
+      socket.on("user_online", async (userId) => {
+        socket.userId = userId;
 
-      socket.on("joinRoom", (chatId) => {
-        socket.join(chatId);
-        console.log(`Клиент зашёл в комнату ${chatId}`);
+        activeUsers.set(userId, {
+          socketId: socket.id,
+          lastSeen: new Date(),
+          isOnline: true,
+        });
+
+        await User.findByIdAndUpdate(userId, {
+          isOnline: true,
+          lastSeen: new Date(),
+        });
+
+        io.emit("user_status", { userId, isOnline: true });
       });
 
-      socket.on("disconnect", () => {
-        console.log("❌ Клиент отключён");
+socket.on("check_user_status", (userId) => {
+  const user = activeUsers.get(userId);
+  const isOnline = user ? user.isOnline : false;
+
+  socket.emit("user_status", { userId, isOnline });
+});
+      socket.on("joinRoom", (chatId) => {
+        socket.join(chatId);
+      });
+
+      const heartbeatInterval = setInterval(async () => {
+        if (socket.userId) {
+          await User.findByIdAndUpdate(socket.userId, {
+            lastSeen: new Date(),
+          });
+        }
+      }, 30000);
+
+      socket.on("disconnect", async () => {
+        clearInterval(heartbeatInterval);
+
+        if (socket.userId) {
+          activeUsers.delete(socket.userId);
+          await User.findByIdAndUpdate(socket.userId, {
+            isOnline: false,
+            lastSeen: new Date(),
+          });
+
+          io.emit("user_status", {
+            userId: socket.userId,
+            isOnline: false,
+          });
+        }
       });
     });
 
@@ -29,5 +72,12 @@ module.exports = {
   getIO: () => {
     if (!io) throw new Error("Socket.io не инициализирован!");
     return io;
-  }
+  },
+
+  getUserStatus: (userId) => {
+    const user = activeUsers.get(userId);
+    return user
+      ? { isOnline: user.isOnline, lastSeen: user.lastSeen }
+      : { isOnline: false, lastSeen: null };
+  },
 };

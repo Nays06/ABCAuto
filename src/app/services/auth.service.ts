@@ -18,11 +18,13 @@ export class AuthService {
   }
 
   loginUser(userData: Object) {
-    return this.http.post(`${this.apiURL}/login`, userData);
+    return this.http.post(`${this.apiURL}/login`, userData, { 
+  withCredentials: true 
+});
   }
 
-  userProfile() {
-    return this.http.get(`${this.apiURL}/profile`);
+  userProfile(userId: string = "") {
+    return this.http.get(`${this.apiURL}/profile/${userId}`);
   }
 
   userAvatar() {
@@ -38,11 +40,18 @@ export class AuthService {
       (res: any) => {
         this.updateAvatar(res.avatar);
       },
-      (err) => console.error('Ошибка загрузки аватарки:', err)
+      (err) => {
+        console.error(err)
+        this.updateAvatar("");
+      }
     );
   }
 
   getUserID() {
     return this.http.get(`${this.apiURL}/id`);
+  }
+
+  refreshToken() {
+    return this.http.get(`${this.apiURL}/refresh`, { withCredentials: true }); // важно для cookie
   }
 }

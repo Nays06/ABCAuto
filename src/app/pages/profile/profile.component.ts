@@ -3,24 +3,33 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf } from '@angular/common';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
+import { Subscription } from 'rxjs';
+import { SocketService } from '../../services/socket.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [FormsModule, NgFor, CarCardComponent],
+  imports: [FormsModule, NgFor, NgIf, CarCardComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
 export class ProfileComponent {
   user: any = {};
   allFavorites = [];
+  otherUserId: any = '';
+  isUserOnline: boolean = false;
+  private statusSubscription!: Subscription;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private favoriteService: FavoritesService
-  ) {}
+    private route: ActivatedRoute,
+    private favoriteService: FavoritesService,
+    private socketService: SocketService
+  ) {
+    this.socketService.requestAllUserStatuses();
+  }
 
   goToAddCar() {
     this.router.navigate(['/car/add']);
@@ -47,20 +56,53 @@ export class ProfileComponent {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.otherUserId = this.route.snapshot.paramMap.get('id');
+
+    this.authService.getUserID().subscribe((res: any) => {
+      if (res.id === this.otherUserId) {
+        this.router.navigate(['/profile']);
+      }
+    });
+
     this.checkAuthAndRedirect();
 
-    this.authService.userProfile().subscribe(
-      (res: any) => {
-        this.user = res.data;
-        this.user.registrationDate = this.formatRussianDate(
-          this.user.registrationDate
-        );
-      },
-      (err: any) => {
-        console.error(err);
-      }
-    );
+    this.statusSubscription = this.socketService
+      .getUserStatus(this.otherUserId)
+      .subscribe({
+        next: (isOnline) => {
+          console.log('Статус пользователя:', isOnline);
+          this.isUserOnline = isOnline;
+        },
+        error: (err) => {
+          console.error('Ошибка получения статуса:', err);
+        },
+      });
+
+    this.socketService.requestUserStatus(this.otherUserId);
+
+    this.authService
+      .userProfile(this.otherUserId ? this.otherUserId : '')
+      .subscribe(
+        (res: any) => {
+          this.user = res.data;
+          this.user.registrationDate = this.formatRussianDate(
+            this.user.registrationDate
+          );
+        },
+        (err: any) => {
+          console.error(err);
+          if(this.otherUserId) {
+            if (err.error.isNotExists) {
+              this.router.navigate(['/profile']);
+            }
+          } else {
+            if (err.error.isNotExists) {
+              this.router.navigate(['/register']);
+            }
+          }
+        }
+      );
 
     this.favoriteService.getFavorites().subscribe(
       (res: any) => {
@@ -70,6 +112,10 @@ export class ProfileComponent {
         console.error(err);
       }
     );
+  }
+
+  ngOnDestroy() {
+    this.statusSubscription.unsubscribe();
   }
 
   formatRussianDate(dateString: any) {

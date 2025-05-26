@@ -1,5 +1,3 @@
-<app-filter (filteredCars)="onFilterChanged($event)"></app-filter>
-
 <div class="cars">
   <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites" />
 </div>

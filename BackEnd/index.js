@@ -3,6 +3,7 @@ const cors = require("cors");
 const { default: mongoose } = require("mongoose");
 const http = require("http");
 const socket = require("./socket");
+const cookieParser = require('cookie-parser');
 
 const authRoute = require("./routes/authRoute");
 const carRoute = require("./routes/carRoute");
@@ -18,9 +19,15 @@ const app = express({ limit: "100mb" });
 const server = http.createServer(app);
 socket.init(server);
 
-app.use(cors());
-
 app.use(express.json());
+
+app.use(cookieParser());
+
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:4200'
+}));
+
 app.use("/auth", authRoute);
 app.use("/cars", carRoute);
 app.use("/favorites", favoriteRoute);

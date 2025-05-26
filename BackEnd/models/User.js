@@ -9,7 +9,13 @@ const User = new Schema({
     roles: [{ type: String, ref: "Role" }],
     registrationDate: { type: Date, default: Date.now },
     reviews: { type: Array, default: [] },
-    favorites: { type: Array, default: [] },
+    favorites: [{
+        carId: { type: String },
+        createdAt: { type: Date, default: Date.now }
+    }],
+    isOnline: { type: Boolean },
+    lastSeen: { type: Date },
+    refreshToken: { type: String },
 })
 
 module.exports = model("Users", User)

@@ -69,7 +69,7 @@
       <div class="header-actions">
         <div class="header-favorite">
           <img src="./assets/img/components/header/heart.svg" alt="heart" />
-          <!-- <div class="counter">10</div> -->
+          <div class="counter" *ngIf="favoriteCount">{{ favoriteCount }}</div>
         </div>
         <div class="header-comparison">
           <img src="./assets/img/components/header/message.svg" alt="message">

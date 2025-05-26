@@ -22,7 +22,8 @@ export class CarCardComponent {
   ) {}
 
   ngOnInit() {
-    this.isFavorite = this.favorites?.includes(this.car._id)
+    this.isFavorite = this.favorites?.some((fav: any) => fav.carId.toString() === this.car._id.toString());
+
   }
 
   showToast() {
@@ -93,15 +94,20 @@ export class CarCardComponent {
       this.favoriteService.addToFavorite(this.car._id).subscribe(
         (res: any) => {
           this.isFavorite = true;
+          this.favoriteService.incrementCount();
         },
         (err: any) => {
           console.error(err);
+          if(err.error.message === "Нет доступа") {
+            this.toast.error("Для выполнение этого действия нужно быть авторизованным");
+          }
         }
       );
     } else {
       this.favoriteService.removeFromFavorites(this.car._id).subscribe(
         (res: any) => {
           this.isFavorite = false;
+          this.favoriteService.decrementCount();
         },
         (err: any) => {
           console.error(err);

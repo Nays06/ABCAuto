@@ -13,8 +13,8 @@ export class CarsService {
     return this.http.get(`${this.apiUrl}/brands`)
   }
 
-  getCars(){
-    return this.http.get(`${this.apiUrl}/cars`)
+  getCars(params: string = ""){
+    return this.http.get(`${this.apiUrl}/cars${params}`)
   }
 
   addCar(newCar: any) {

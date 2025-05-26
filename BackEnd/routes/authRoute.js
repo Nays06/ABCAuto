@@ -8,7 +8,9 @@ router.post("/registration", upload.single("avatar"), authController.registratio
 router.post("/login", authController.login);
 // router.get("/users", authMiddleware, authController.getUsers);
 router.get("/profile", authMiddleware, authController.getProfile);
+router.get("/profile/:id", authController.getProfileToId);
 router.get("/avatar", authMiddleware, authController.getAvatar);
 router.get("/id", authMiddleware, authController.getID);
+router.get('/refresh', authController.refresh);
 
 module.exports = router;

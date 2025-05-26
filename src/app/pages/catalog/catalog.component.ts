@@ -3,6 +3,7 @@ import { FilterComponent } from '../../components/filter/filter.component';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
 import { CarsService } from '../../services/cars.service';
 import { NgFor } from '@angular/common';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-catalog',
@@ -11,31 +12,30 @@ import { NgFor } from '@angular/common';
   styleUrl: './catalog.component.css',
 })
 export class CatalogComponent {
-  brand: any = '';
-  priceMin: any = 0;
-  priceMax: any = 0;
-  driveType = ""
-  bodyType = ""
   cars = []
+  allFavorites = [];
 
   private _carService: CarsService;
 
-  constructor(CarsService: CarsService) {
+  constructor(CarsService: CarsService, private favoriteService: FavoritesService) {
     this._carService = CarsService;
   }
   
   ngOnInit() {
     this.getCars();
+
+    this.favoriteService.getFavorites().subscribe(
+      (res: any) => {
+        this.allFavorites = res.favorites;
+      },
+      (err: any) => {
+        console.error(err);
+      }
+    );
   }
 
-  onFilterChanged(filterValues: any) {
-    console.log(filterValues);
-    
-    this.brand = filterValues.brand;
-    this.priceMin = filterValues.priceRange.min;
-    this.priceMax = filterValues.priceRange.max;
-    this.driveType = filterValues.driveType
-    this.bodyType = filterValues.bodyType
+  onFilterChanged(filterCars: any) {
+    this.cars = filterCars
   }
 
   getCars() {
