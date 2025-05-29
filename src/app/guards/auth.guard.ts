@@ -22,12 +22,12 @@ export class AuthGuard implements CanActivate {
       map((res: any) => {
         const isAuthenticated = !!res.id && !res.isNotExists;
         if (!isAuthenticated) {
-          this.router.navigate(['/register']);
+          this.router.navigate(['/login']);
         }
         return isAuthenticated;
       }),
       catchError((err) => {
-        this.router.navigate(['/register']);
+        this.router.navigate(['/login']);
         return of(false);
       })
     );
