@@ -67,11 +67,11 @@
       </nav>
 
       <div class="header-actions">
-        <div class="header-favorite">
+        <div class="header-favorite" (click)="goToFavorites()">
           <img src="./assets/img/components/header/heart.svg" alt="heart" />
           <div class="counter" *ngIf="favoriteCount">{{ favoriteCount }}</div>
         </div>
-        <div class="header-comparison">
+        <div class="header-comparison" (click)="goToChats()">
           <img src="./assets/img/components/header/message.svg" alt="message">
           <!-- <div class="counter">12</div> -->
         </div>

@@ -20,22 +20,12 @@ export const routes: Routes = [
     { path: "catalog", component: CatalogComponent },
     { path: "login", component: LoginComponent },
     { path: "register", component: RegisterComponent },
-    { path: "profile", component: ProfileComponent },
+    { path: "profile", component: ProfileComponent, canActivate: [AuthGuard] },
     { path: "profile/:id", component: ProfileComponent },
-    { path: "car/add", component: AddCarComponent },
+    { path: "car/add", component: AddCarComponent, canActivate: [AuthGuard] },
     { path: "car/:id", component: CarDetailsComponent },
-    { path: "car/edit/:id", component: EditCarComponent },
-    { path: "chat/:id", component: ChatComponent },
-    {
-  path: 'chats',
-  component: ChatsComponent,
-  children: [
-    // По умолчанию показываем пустое окно или дефолтный текст
-    { path: '', component: EmptyChatComponent }, // можно заменить на любой компонент, или оставить пустым
-    { path: ':id', component: ChatWindowComponent }
-  ],
-  canActivate: [AuthGuard]
-},
-    // { path: "chats", component: ChatsComponent, canActivate: [AuthGuard] },
-    { path: "favorites", component: FavoritesComponent },
+    { path: "car/edit/:id", component: EditCarComponent, canActivate: [AuthGuard] },
+    // { path: "chat/:id", component: ChatComponent },
+    { path: 'chats', component: ChatsComponent, children: [{ path: '', component: EmptyChatComponent }, { path: ':id', component: ChatWindowComponent }], canActivate: [AuthGuard] },
+    { path: "favorites", component: FavoritesComponent, canActivate: [AuthGuard] },
 ];

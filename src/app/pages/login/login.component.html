@@ -30,6 +30,7 @@
           type="password"
           placeholder="Пароль"
           formControlName="password"
+          (keyup.enter)="login()"
         />
         <div
           *ngIf="

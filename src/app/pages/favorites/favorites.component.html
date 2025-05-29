@@ -1,3 +1,7 @@
-<div class="cars">
-  <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites" />
-</div>
+@if (cars.length) {
+  <div class="cars">
+    <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites"/>
+  </div>
+} @else {
+  <div class="empty">Список избранного пуст🙁</div>
+}

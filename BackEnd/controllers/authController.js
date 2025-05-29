@@ -14,8 +14,6 @@ const generateAccessToken = (id) => {
   return jwt.sign(payload, secret, { expiresIn: "15m" });
 };
 
-// test
-
 const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 };
@@ -51,7 +49,7 @@ class authController {
       if (req.file) {
         user.avatar = req.file.path;
       } else {
-        user.avatar = "static/default-avatar.jpeg";
+        user.avatar = "static/avatar/default-avatar.jpeg";
       }
 
       await user.save();
@@ -87,16 +85,14 @@ class authController {
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
 
-    // Сохраняем refresh token в БД
     user.refreshToken = refreshToken;
     await user.save();
 
-    // Отправляем refresh token в cookie
 res.cookie('refreshToken', refreshToken, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production', // true в production, false в development
+  secure: process.env.NODE_ENV === 'production',
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+  maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/',
 });
     return res.status(200).json({ message: "Вы успешно вошли!", token: accessToken });
