@@ -45,8 +45,10 @@ export class ChatWindowComponent {
     });
 
     this.socketService.onNewMessage().subscribe((msg) => {
-      this.chatMessages.push(msg);
-      this.scrollToBottom();
+      if (msg.chatId === this.chatId) {
+        this.chatMessages.push(msg);
+        this.scrollToBottom();
+      }
     });
   }
 
@@ -68,30 +70,29 @@ export class ChatWindowComponent {
   }
 
 sendMessage() {
-    if (this.message.trim()) {
-      const messageData = {
-        chatId: this.chat._id,
-        senderId: this.currentUserId,
-        recipientId:
+  if (this.message.trim()) {
+    const messageData = {
+      chatId: this.chat._id,
+      senderId: this.currentUserId,
+      recipientId:
           this.currentUserId === this.chat.sellerId
             ? this.chat.buyerId
             : this.chat.sellerId,
-        content: this.message.trim(),
-      };
+      content: this.message.trim(),
+    };
 
-      this.chatService.sendMessageWithChatId(messageData).subscribe(
-        (r: any) => {
-          console.log('Успешно!', r);
-          this.socketService.sendMessage(messageData);
-          this.message = '';
-          this.scrollToBottom();
-        },
-        (e: any) => {
-          console.error('Ошибка отправки сообщения', e);
-        }
-      );
-    }
+    this.chatService.sendMessageWithChatId(messageData).subscribe(
+      (r: any) => {
+        console.log('Успешно!', r);
+        this.message = '';
+        this.scrollToBottom();
+      },
+      (e: any) => {
+        console.error('Ошибка отправки сообщения', e);
+      }
+    );
   }
+}
 
   formateTime(time: any) {
     const mskTime = new Date(time).toLocaleTimeString('ru-RU', {

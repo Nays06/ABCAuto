@@ -39,36 +39,37 @@ export class ChatService {
     });
   }
 
-  private updateChatListWithNewMessage(message: any) {
-    const currentChats = this.chatsSubject.getValue();
-
-    const findUserById = (userId: string) => {
-      return {
-        _id: userId,
-        name: 'Test',
-        surname: 'Test',
-        avatar: 'static/avatar/default-avatar.jpeg',
-      };
-    };
-
-    const updatedChats = currentChats.map((chat) => {
-      if (chat._id === message.chatId) {
-        const senderUser = findUserById(message.senderId);
-
-        return {
-          ...chat,
-          lastMessage: {
-            senderId: senderUser,
-            content: message.content,
-            sentAt: message.createdAt || new Date().toISOString(),
-          },
-        };
-      }
-      return chat;
-    });
-
-    this.chatsSubject.next(updatedChats);
+private updateChatListWithNewMessage(message: any) {
+  const currentChats = this.chatsSubject.getValue();
+  const chatExists = currentChats.some((chat) => chat._id === message.chatId);
+  if (!chatExists) {
+    console.warn('Чат с chatId', message.chatId, 'не найден в списке чатов');
+    return;
   }
+  const updatedChats = currentChats.map((chat) => {
+    console.log(chat);
+    
+    if (chat._id === message.chatId) {
+      return {
+        ...chat,
+        lastMessage: {
+          senderId: (chat.buyerId._id === message.senderId ? { _id: chat.buyerId._id, name: chat.buyerId.name, surname: chat.buyerId.surname, avatar: chat.buyerId.avatar } : { _id: chat.sellerId._id, name: chat.sellerId.name, surname: chat.sellerId.surname, avatar: chat.sellerId.avatar }),
+          content: message.content,
+          createdAt: message.createdAt || new Date().toISOString(),
+        },
+      };
+    }
+    return chat;
+  });
+
+  updatedChats.sort((a, b) => {
+    const dateA = new Date(a.lastMessage?.createdAt || 0);
+    const dateB = new Date(b.lastMessage?.createdAt || 0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  this.chatsSubject.next(updatedChats);
+}
 
   sendMessageWithOutChatId(data: any) {
     this.http

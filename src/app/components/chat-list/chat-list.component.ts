@@ -25,6 +25,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
     this.subscription = this.chatService.getChats().subscribe(
       (res) => {
         this.chats = res;
+        console.log(this.chats);
+        
 
         this.chats.forEach((chat) => {
           this.socketService.joinRoom(chat._id);
