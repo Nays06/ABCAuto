@@ -35,14 +35,14 @@ export class SocketService {
     this.socket.emit('newMessage', message);
   }
 
-  onNewMessage(): Observable<any> {
-    return new Observable((observer) => {
-      this.socket.on('newMessage', (message) => {
-        observer.next(message);
-      });
+onNewMessage(): Observable<any> {
+  return new Observable((observer) => {
+    this.socket.on('newMessage', (message) => {
+      console.log('Получено новое сообщение:', message);
+      observer.next(message);
     });
-  }
-
+  });
+}
   disconnect() {
     this.socket.disconnect();
   }

@@ -67,10 +67,9 @@ export class ChatWindowComponent {
     );
   }
 
-  sendMessage() {
-    console.log(this.message.trim());
-    this.chatService
-      .sendMessageWithChatId({
+sendMessage() {
+    if (this.message.trim()) {
+      const messageData = {
         chatId: this.chat._id,
         senderId: this.currentUserId,
         recipientId:
@@ -78,17 +77,20 @@ export class ChatWindowComponent {
             ? this.chat.buyerId
             : this.chat.sellerId,
         content: this.message.trim(),
-      })
-      .subscribe(
+      };
+
+      this.chatService.sendMessageWithChatId(messageData).subscribe(
         (r: any) => {
-          console.log('Учпешно!', r);
+          console.log('Успешно!', r);
+          this.socketService.sendMessage(messageData);
           this.message = '';
           this.scrollToBottom();
         },
         (e: any) => {
-          console.error(e);
+          console.error('Ошибка отправки сообщения', e);
         }
       );
+    }
   }
 
   formateTime(time: any) {

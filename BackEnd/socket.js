@@ -40,6 +40,10 @@ socket.on("check_user_status", (userId) => {
         socket.join(chatId);
       });
 
+      socket.on("newMessage", (message) => {
+  io.to(message.chatId).emit("newMessage", message);
+});
+
       const heartbeatInterval = setInterval(async () => {
         if (socket.userId) {
           await User.findByIdAndUpdate(socket.userId, {

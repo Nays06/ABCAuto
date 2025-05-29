@@ -50,7 +50,7 @@ class chatController {
         attachments,
       });
       await message.save();
-
+      
       const io = getIO();
       io.to(chatId).emit("newMessage", message);
 
