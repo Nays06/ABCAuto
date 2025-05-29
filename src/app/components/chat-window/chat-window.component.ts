@@ -10,7 +10,7 @@ import { SocketService } from '../../services/socket.service';
   selector: 'app-chat-window',
   imports: [NgFor, FormsModule, NgIf],
   templateUrl: './chat-window.component.html',
-  styleUrl: './chat-window.component.css'
+  styleUrl: './chat-window.component.css',
 })
 export class ChatWindowComponent {
   chatId: any = '';
@@ -35,7 +35,7 @@ export class ChatWindowComponent {
 
       if (this.chatId) {
         await this.loadChat(this.chatId);
-
+        this.markMessagesAsRead();
         this.socketService.joinRoom(this.chatId);
       }
     });
@@ -48,6 +48,19 @@ export class ChatWindowComponent {
       if (msg.chatId === this.chatId) {
         this.chatMessages.push(msg);
         this.scrollToBottom();
+
+        if (msg.senderId !== this.currentUserId) {
+          this.markMessagesAsRead();
+        }
+      }
+    });
+
+    this.socketService.onMessageRead().subscribe(({ messageId, chatId }) => {
+      if (chatId === this.chatId) {
+        const message = this.chatMessages.find((m: any) => m._id === messageId);
+        if (message) {
+          message.isRead = true;
+        }
       }
     });
   }
@@ -60,8 +73,8 @@ export class ChatWindowComponent {
         this.chat = res.chatInfo;
         this.chatMessages = res.chatMessages;
         console.log(res);
-
         this.scrollToBottom(false);
+        this.markMessagesAsRead();
       },
       (err: any) => {
         console.error(err);
@@ -69,30 +82,60 @@ export class ChatWindowComponent {
     );
   }
 
-sendMessage() {
-  if (this.message.trim()) {
-    const messageData = {
-      chatId: this.chat._id,
-      senderId: this.currentUserId,
-      recipientId:
+  markMessagesAsRead() {
+    const unreadMessages = this.chatMessages.filter(
+      (msg: any) => !msg.isRead && msg.senderId !== this.currentUserId
+    );
+
+    if (unreadMessages.length > 0) {
+      const messageIds = unreadMessages.map((msg: any) => msg._id);
+
+      this.chatService.markMessagesAsRead(this.chatId, messageIds).subscribe(
+        () => {
+          unreadMessages.forEach((msg: any) => (msg.isRead = true));
+
+          messageIds.forEach((messageId: string) => {
+            this.socketService.emitMessageRead({
+              chatId: this.chatId,
+              messageId,
+              recipientId:
+                this.currentUserId === this.chat.sellerId
+                  ? this.chat.buyerId
+                  : this.chat.sellerId,
+            });
+          });
+        },
+        (err: any) => {
+          console.error('Ошибка при отметке сообщений как прочитанных', err);
+        }
+      );
+    }
+  }
+
+  sendMessage() {
+    if (this.message.trim()) {
+      const messageData = {
+        chatId: this.chat._id,
+        senderId: this.currentUserId,
+        recipientId:
           this.currentUserId === this.chat.sellerId
             ? this.chat.buyerId
             : this.chat.sellerId,
-      content: this.message.trim(),
-    };
+        content: this.message.trim(),
+      };
 
-    this.chatService.sendMessageWithChatId(messageData).subscribe(
-      (r: any) => {
-        console.log('Успешно!', r);
-        this.message = '';
-        this.scrollToBottom();
-      },
-      (e: any) => {
-        console.error('Ошибка отправки сообщения', e);
-      }
-    );
+      this.chatService.sendMessageWithChatId(messageData).subscribe(
+        (r: any) => {
+          console.log('Успешно!', r);
+          this.message = '';
+          this.scrollToBottom();
+        },
+        (e: any) => {
+          console.error('Ошибка отправки сообщения', e);
+        }
+      );
+    }
   }
-}
 
   formateTime(time: any) {
     const mskTime = new Date(time).toLocaleTimeString('ru-RU', {

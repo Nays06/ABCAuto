@@ -109,6 +109,13 @@ export class ChatService {
     this.chatsSubject.next(updatedChats);
   }
 
+  markMessagesAsRead(chatId: string, messageIds: string[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/messages/read`, {
+      chatId,
+      messageIds,
+    });
+  }
+
   sendMessageWithOutChatId(data: any) {
     this.http
       .post(`${this.apiUrl}/chats`, {

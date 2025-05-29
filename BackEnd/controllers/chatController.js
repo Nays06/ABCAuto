@@ -25,8 +25,8 @@ class chatController {
         await chat.save();
 
         const io = getIO();
-        io.to(buyerId).emit('newChat', chat);
-        io.to(sellerId).emit('newChat', chat);
+        io.to(buyerId).emit("newChat", chat);
+        io.to(sellerId).emit("newChat", chat);
       }
 
       res.status(200).json(chat);
@@ -54,7 +54,7 @@ class chatController {
         attachments,
       });
       await message.save();
-      
+
       const io = getIO();
       io.to(chatId).emit("newMessage", message);
 
@@ -74,26 +74,26 @@ class chatController {
     }
   }
 
-async getUserChats(req, res) {
-  const userId = req.user.id;
+  async getUserChats(req, res) {
+    const userId = req.user.id;
 
-  try {
-    const chats = await Chat.find({
-      $or: [{ buyerId: userId }, { sellerId: userId }],
-    })
-      .sort({ updatedAt: -1 })
-      .limit(20)
-      .populate('advertisementId', 'images brand model price')
-      .populate('buyerId', 'avatar name surname')
-      .populate('sellerId', 'avatar name surname')
-      .populate('lastMessage.senderId', 'avatar name surname');
+    try {
+      const chats = await Chat.find({
+        $or: [{ buyerId: userId }, { sellerId: userId }],
+      })
+        .sort({ updatedAt: -1 })
+        .limit(20)
+        .populate("advertisementId", "images brand model price")
+        .populate("buyerId", "avatar name surname")
+        .populate("sellerId", "avatar name surname")
+        .populate("lastMessage.senderId", "avatar name surname");
 
-    res.status(200).json(chats);
-  } catch (error) {
-    res.status(500).json({ error: "Ошибка при получении чатов" });
-    console.log(error);
+      res.status(200).json(chats);
+    } catch (error) {
+      res.status(500).json({ error: "Ошибка при получении чатов" });
+      console.log(error);
+    }
   }
-}
 
   async getChatToId(req, res) {
     try {
@@ -101,16 +101,37 @@ async getUserChats(req, res) {
 
       const chatInfo = await Chat.findById(chatId);
 
-      const chatMessages = await Message.find({ chatId }).sort({ createdAt: 1 });
+      const chatMessages = await Message.find({ chatId }).sort({
+        createdAt: 1,
+      });
 
-      const advertisementInfo = await Car.findById(chatInfo.advertisementId).select('make model year price images');
+      const advertisementInfo = await Car.findById(
+        chatInfo.advertisementId
+      ).select("make model year price images");
 
-      const sellerInfo = await User.findById(chatInfo.sellerId).select('name surname avatar');
+      const sellerInfo = await User.findById(chatInfo.sellerId).select(
+        "name surname avatar"
+      );
 
-      res.status(200).json({ chatInfo, chatMessages, advertisementInfo, sellerInfo });
+      res
+        .status(200)
+        .json({ chatInfo, chatMessages, advertisementInfo, sellerInfo });
     } catch (e) {
       console.log(e);
       res.status(500).json({ message: "Ошибка вывода одного чата" });
+    }
+  }
+
+  async readMessage(req, res) {
+    const { chatId, messageIds } = req.body;
+    try {
+      await Message.updateMany(
+        { _id: { $in: messageIds }, chatId },
+        { $set: { isRead: true } }
+      );
+      res.status(200).send({ success: true });
+    } catch (error) {
+      res.status(500).send({ error: "Ошибка при прочтении сообщения" });
     }
   }
 }

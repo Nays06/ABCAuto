@@ -63,6 +63,19 @@ onNewMessage(): Observable<any> {
     });
   });
 }
+
+emitMessageRead(data: { chatId: string; messageId: string; recipientId: string }) {
+    this.socket.emit('messageRead', data);
+  }
+
+  onMessageRead(): Observable<{ messageId: string; chatId: string }> {
+    return new Observable((observer) => {
+      this.socket.on('messageRead', (data) => {
+        observer.next(data);
+      });
+    });
+  }
+
   disconnect() {
     this.socket.disconnect();
   }

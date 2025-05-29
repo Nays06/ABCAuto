@@ -49,6 +49,12 @@ module.exports = {
         console.log(`Клиент ${userId} подключился к комнате`);
       });
 
+      socket.on('messageRead', async ({ chatId, messageId, recipientId }) => {
+        console.log("read", messageId);
+        
+        io.to(chatId).emit('messageRead', { messageId, chatId });
+      });
+
       const heartbeatInterval = setInterval(async () => {
         if (socket.userId) {
           await User.findByIdAndUpdate(socket.userId, {
