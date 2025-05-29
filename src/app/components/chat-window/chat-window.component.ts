@@ -30,25 +30,20 @@ export class ChatWindowComponent {
   ) {}
 
   ngOnInit(): void {
-    // Следим за изменениями параметра id в URL
     this.route.paramMap.subscribe(async (params) => {
       this.chatId = params.get('id')!;
 
       if (this.chatId) {
-        // Загружаем новый чат
         await this.loadChat(this.chatId);
 
-        // Подключаемся к комнате (или обновляем подключение)
         this.socketService.joinRoom(this.chatId);
       }
     });
 
-    // Получаем ID текущего пользователя
     this.authService.getUserID().subscribe((r: any) => {
       this.currentUserId = r.id;
     });
 
-    // Слушаем новые сообщения
     this.socketService.onNewMessage().subscribe((msg) => {
       this.chatMessages.push(msg);
       this.scrollToBottom();

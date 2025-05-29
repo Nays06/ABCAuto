@@ -65,9 +65,17 @@ export class HeaderComponent {
     this.isDropdownOpen = false;
   }
 
+  goToFavorites() {
+    this.router.navigate(['/favorites']);
+  }
+
+  goToChats() {
+    this.router.navigate(['/chats']);
+  }
+
   logout() {
     localStorage.removeItem('token');
-    this.router.navigate(['/register']);
+    this.router.navigate(['/login']);
     this.isDropdownOpen = false;
     this.isAuthenticated = false
   }

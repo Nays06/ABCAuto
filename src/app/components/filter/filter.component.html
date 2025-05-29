@@ -2,7 +2,7 @@
   <div class="brands">
     <div *ngFor="let brand of brands">
       <div (click)="selectBrand(brand.title)" [class]="{ active: filterValues.brand === brand.title }">
-        <img [src]="brand.img" [alt]="brand.title" />
+        <img [src]="`http://localhost:5555/${brand.img}`" [alt]="brand.title" />
         <span>{{ brand.title }}</span>
       </div>
     </div>

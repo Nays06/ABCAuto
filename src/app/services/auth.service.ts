@@ -52,6 +52,6 @@ export class AuthService {
   }
 
   refreshToken() {
-    return this.http.get(`${this.apiURL}/refresh`, { withCredentials: true }); // важно для cookie
+    return this.http.get(`${this.apiURL}/refresh`, { withCredentials: true });
   }
 }

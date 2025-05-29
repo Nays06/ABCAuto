@@ -35,27 +35,6 @@ export class ProfileComponent {
     this.router.navigate(['/car/add']);
   }
 
-  checkAuthAndRedirect(): void {
-    const token = localStorage.getItem('token');
-    const isValid = token ? this.isTokenValid(token) : false;
-
-    if (!isValid) {
-      this.router.navigate(['/register']);
-    }
-  }
-
-  private isTokenValid(token: string): boolean {
-    try {
-      const payloadBase64 = token.split('.')[1];
-      const decoded = JSON.parse(atob(payloadBase64));
-      const exp = decoded.exp;
-
-      return Date.now() < exp * 1000;
-    } catch (e) {
-      return false;
-    }
-  }
-
   ngOnInit(): void {
     this.otherUserId = this.route.snapshot.paramMap.get('id');
 
@@ -64,8 +43,6 @@ export class ProfileComponent {
         this.router.navigate(['/profile']);
       }
     });
-
-    this.checkAuthAndRedirect();
 
     this.statusSubscription = this.socketService
       .getUserStatus(this.otherUserId)
@@ -98,7 +75,7 @@ export class ProfileComponent {
             }
           } else {
             if (err.error.isNotExists) {
-              this.router.navigate(['/register']);
+              this.router.navigate(['/login']);
             }
           }
         }

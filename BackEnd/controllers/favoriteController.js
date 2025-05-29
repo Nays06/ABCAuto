@@ -37,7 +37,7 @@ class favoriteController {
       const userId = req.user.id;
       const carId = req.params.id;
 
-      await User.updateOne({ _id: userId }, { $pull: { favorites: carId } });
+      await User.updateOne({ _id: userId }, { $pull: { favorites: { carId } } });
 
       res
         .status(200)
