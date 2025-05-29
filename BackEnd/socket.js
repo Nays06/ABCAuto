@@ -30,19 +30,24 @@ module.exports = {
         io.emit("user_status", { userId, isOnline: true });
       });
 
-socket.on("check_user_status", (userId) => {
-  const user = activeUsers.get(userId);
-  const isOnline = user ? user.isOnline : false;
+      socket.on("check_user_status", (userId) => {
+        const user = activeUsers.get(userId);
+        const isOnline = user ? user.isOnline : false;
 
-  socket.emit("user_status", { userId, isOnline });
-});
+        socket.emit("user_status", { userId, isOnline });
+      });
       socket.on("joinRoom", (chatId) => {
         socket.join(chatId);
       });
 
       socket.on("newMessage", (message) => {
-  io.to(message.chatId).emit("newMessage", message);
-});
+        io.to(message.chatId).emit("newMessage", message);
+      });
+
+      socket.on('joinUserRoom', (userId) => {
+        socket.join(userId);
+        console.log(`Клиент ${userId} подключился к комнате`);
+      });
 
       const heartbeatInterval = setInterval(async () => {
         if (socket.userId) {

@@ -23,6 +23,10 @@ class chatController {
           sellerId,
         });
         await chat.save();
+
+        const io = getIO();
+        io.to(buyerId).emit('newChat', chat);
+        io.to(sellerId).emit('newChat', chat);
       }
 
       res.status(200).json(chat);

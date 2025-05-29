@@ -18,6 +18,7 @@ export class ChatService {
   ) {
     this.loadChats();
     this.subscribeToNewMessages();
+    this.subscribeToNewChats();
   }
 
   apiUrl = 'http://localhost:5555/chat';
@@ -39,37 +40,74 @@ export class ChatService {
     });
   }
 
-private updateChatListWithNewMessage(message: any) {
-  const currentChats = this.chatsSubject.getValue();
-  const chatExists = currentChats.some((chat) => chat._id === message.chatId);
-  if (!chatExists) {
-    console.warn('Чат с chatId', message.chatId, 'не найден в списке чатов');
-    return;
+  private subscribeToNewChats() {
+    this.socketService.onNewChat().subscribe((newChat) => {
+      this.addNewChatToList(newChat);
+    });
   }
-  const updatedChats = currentChats.map((chat) => {
-    console.log(chat);
-    
-    if (chat._id === message.chatId) {
-      return {
-        ...chat,
-        lastMessage: {
-          senderId: (chat.buyerId._id === message.senderId ? { _id: chat.buyerId._id, name: chat.buyerId.name, surname: chat.buyerId.surname, avatar: chat.buyerId.avatar } : { _id: chat.sellerId._id, name: chat.sellerId.name, surname: chat.sellerId.surname, avatar: chat.sellerId.avatar }),
-          content: message.content,
-          createdAt: message.createdAt || new Date().toISOString(),
-        },
-      };
+
+  private addNewChatToList(newChat: any) {
+    const currentChats = this.chatsSubject.getValue();
+    if (!currentChats.find((c) => c._id === newChat._id)) {
+      setTimeout(() => {
+        this.http.get<any[]>(`${this.apiUrl}/chats`).subscribe(
+          (res: any) => {
+            const thisChat = res.find((chat: any) => chat._id === newChat._id);
+            console.log('thisChat', thisChat);
+
+            currentChats.unshift(thisChat);
+            this.chatsSubject.next(currentChats);
+          },
+          (err) => {
+            console.error('Ошибка загрузки чатов', err);
+          }
+        );
+      }, 200);
     }
-    return chat;
-  });
+  }
 
-  updatedChats.sort((a, b) => {
-    const dateA = new Date(a.lastMessage?.createdAt || 0);
-    const dateB = new Date(b.lastMessage?.createdAt || 0);
-    return dateB.getTime() - dateA.getTime();
-  });
+  private updateChatListWithNewMessage(message: any) {
+    const currentChats = this.chatsSubject.getValue();
+    const chatExists = currentChats.some((chat) => chat._id === message.chatId);
+    if (!chatExists) {
+      console.warn('Чат с chatId', message.chatId, 'не найден в списке чатов');
+      return;
+    }
+    const updatedChats = currentChats.map((chat) => {
+      if (chat._id === message.chatId) {
+        return {
+          ...chat,
+          lastMessage: {
+            senderId:
+              chat.buyerId._id === message.senderId
+                ? {
+                    _id: chat.buyerId._id,
+                    name: chat.buyerId.name,
+                    surname: chat.buyerId.surname,
+                    avatar: chat.buyerId.avatar,
+                  }
+                : {
+                    _id: chat.sellerId._id,
+                    name: chat.sellerId.name,
+                    surname: chat.sellerId.surname,
+                    avatar: chat.sellerId.avatar,
+                  },
+            content: message.content,
+            createdAt: message.createdAt || new Date().toISOString(),
+          },
+        };
+      }
+      return chat;
+    });
 
-  this.chatsSubject.next(updatedChats);
-}
+    updatedChats.sort((a, b) => {
+      const dateA = new Date(a.lastMessage?.createdAt || 0);
+      const dateB = new Date(b.lastMessage?.createdAt || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    this.chatsSubject.next(updatedChats);
+  }
 
   sendMessageWithOutChatId(data: any) {
     this.http
