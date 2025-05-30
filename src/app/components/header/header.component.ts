@@ -27,11 +27,11 @@ export class HeaderComponent {
 
   ngOnInit() {
     this.authService.currentAvatar$.subscribe((avatar) => {
-      if(avatar) {
+      if (avatar) {
         this.avatarUrl = avatar;
-        this.isAuthenticated = true
+        this.isAuthenticated = true;
       } else {
-        this.isAuthenticated = false
+        this.isAuthenticated = false;
       }
     });
 
@@ -41,11 +41,11 @@ export class HeaderComponent {
 
     this.authService.getUserID().subscribe(
       (res: any) => {
-        this.isAuthenticated =  !res.isNotExists
+        this.isAuthenticated = !res.isNotExists;
       },
       (err: any) => {
         console.log(err);
-        this.isAuthenticated = false
+        this.isAuthenticated = false;
       }
     );
 
@@ -74,10 +74,18 @@ export class HeaderComponent {
   }
 
   logout() {
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
-    this.isDropdownOpen = false;
-    this.isAuthenticated = false
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+        this.favoriteService.setCount(0)
+        this.isDropdownOpen = false;
+        this.isAuthenticated = false;
+      },
+      error: (err) => {
+        console.error('Ошибка выхода:', err);
+        this.router.navigate(['/login']);
+      },
+    });
   }
 
   toggleDropdown() {

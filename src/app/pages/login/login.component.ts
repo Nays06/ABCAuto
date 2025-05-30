@@ -11,6 +11,8 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SocketService } from '../../services/socket.service';
+import { ChatService } from '../../services/chat.service';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-login',
@@ -58,7 +60,8 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private route: Router,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private favoriteService: FavoritesService
   ) {
     this.authForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -77,6 +80,14 @@ export class LoginComponent {
             (res: any) => {
               if (res.message === 'Успешно') {
                 this.socketService.setUserOnline(res.id);
+                this.favoriteService.getFavorites().subscribe(
+                  (res: any) => {
+                    this.favoriteService.setCount(res.favorites.length);
+                  },
+                  (err) => {
+                    console.error(err);
+                  }
+                );
               }
             },
             (err: any) => {

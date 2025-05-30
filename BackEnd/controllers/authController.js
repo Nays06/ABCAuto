@@ -15,7 +15,9 @@ const generateAccessToken = (id) => {
 };
 
 const generateRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+  });
 };
 
 class authController {
@@ -70,65 +72,70 @@ class authController {
   }
 
   async login(req, res) {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Неправильная почта!" });
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: "Неправильная почта!" });
+      }
+
+      const validPassword = bcrypt.compareSync(password, user.password);
+      if (!validPassword) {
+        return res.status(400).json({ message: "Непарвильный пароль" });
+      }
+
+      const accessToken = generateAccessToken(user._id);
+      const refreshToken = generateRefreshToken(user._id);
+
+      user.refreshToken = refreshToken;
+      await user.save();
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+      return res
+        .status(200)
+        .json({ message: "Вы успешно вошли!", token: accessToken });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Ошибка входа" });
     }
-
-    const validPassword = bcrypt.compareSync(password, user.password);
-    if (!validPassword) {
-      return res.status(400).json({ message: "Непарвильный пароль" });
-    }
-
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
-
-    user.refreshToken = refreshToken;
-    await user.save();
-
-res.cookie('refreshToken', refreshToken, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-  path: '/',
-});
-    return res.status(200).json({ message: "Вы успешно вошли!", token: accessToken });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Ошибка входа" });
   }
-}
 
   async getProfile(req, res) {
     try {
       const user = await User.findById(req.user.id);
-      
-      if(!user) {
-        return res.status(401).json({ message: "Пользователя с таким ID не существует", isNotExists: true })
+
+      if (!user) {
+        return res.status(401).json({
+          message: "Пользователя с таким ID не существует",
+          isNotExists: true,
+        });
       }
 
       const adsCount = await Car.find({ sellerId: user._id }).countDocuments();
-      const ads = await Car.find({ sellerId: user._id }).sort({ _id: -1 }).limit(12)
+      const ads = await Car.find({ sellerId: user._id })
+        .sort({ _id: -1 })
+        .limit(12);
 
       if (user) {
-        res
-          .status(200)
-          .json({
-            message: "Успешно!",
-            data: {
-              name: user.name,
-              surname: user.surname,
-              email: user.email,
-              avatar: user.avatar,
-              registrationDate: user.registrationDate,
-              adsCount,
-              ads,
-              reviewsCount: user.reviews.length,
-            },
-          });
+        res.status(200).json({
+          message: "Успешно!",
+          data: {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            avatar: user.avatar,
+            registrationDate: user.registrationDate,
+            adsCount,
+            ads,
+            reviewsCount: user.reviews.length,
+          },
+        });
       } else {
         res.status(400).json({ message: "Пользователь не найден!" });
       }
@@ -138,34 +145,39 @@ res.cookie('refreshToken', refreshToken, {
     }
   }
 
-    async getProfileToId(req, res) {
+  async getProfileToId(req, res) {
     try {
-      if(req.params?.id?.toString().length < 24) {
-        return res.status(401).json({ message: "Неверный ID", isNotExists: true })
+      if (req.params?.id?.toString().length < 24) {
+        return res
+          .status(401)
+          .json({ message: "Неверный ID", isNotExists: true });
       }
       const user = await User.findById(req.params.id);
-      if(!user) {
-        return res.status(401).json({ message: "Такого пользователя не существует", isNotExists: true })
+      if (!user) {
+        return res.status(401).json({
+          message: "Такого пользователя не существует",
+          isNotExists: true,
+        });
       }
       const adsCount = await Car.find({ sellerId: user._id }).countDocuments();
-      const ads = await Car.find({ sellerId: user._id }).sort({ _id: -1 }).limit(12)
+      const ads = await Car.find({ sellerId: user._id })
+        .sort({ _id: -1 })
+        .limit(12);
 
       if (user) {
-        res
-          .status(200)
-          .json({
-            message: "Успешно!",
-            data: {
-              name: user.name,
-              surname: user.surname,
-              email: user.email,
-              avatar: user.avatar,
-              registrationDate: user.registrationDate,
-              adsCount,
-              ads,
-              reviewsCount: user?.reviews?.length,
-            },
-          });
+        res.status(200).json({
+          message: "Успешно!",
+          data: {
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            avatar: user.avatar,
+            registrationDate: user.registrationDate,
+            adsCount,
+            ads,
+            reviewsCount: user?.reviews?.length,
+          },
+        });
       } else {
         res.status(400).json({ message: "Пользователь не найден!" });
       }
@@ -180,12 +192,10 @@ res.cookie('refreshToken', refreshToken, {
       const user = await User.findById(req.user.id);
 
       if (user) {
-        res
-          .status(200)
-          .json({
-            message: "Успешно!",
-            avatar: user.avatar,
-          });
+        res.status(200).json({
+          message: "Успешно!",
+          avatar: user.avatar,
+        });
       } else {
         res.status(400).json({ message: "Пользователь не найден!" });
       }
@@ -198,36 +208,69 @@ res.cookie('refreshToken', refreshToken, {
   async getID(req, res) {
     try {
       const id = req.user.id;
-      const user = await User.findById(id)
-      const isNotExists = !user
-      res.status(200).json({ message: "Успешно", id, isNotExists })
+      const user = await User.findById(id);
+      const isNotExists = !user;
+      res.status(200).json({ message: "Успешно", id, isNotExists });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       res.status(500).json({ message: "Ошибка вывода id" });
     }
   }
 
   async refresh(req, res) {
-  const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
-  if (!refreshToken) {
-    return res.status(401).json({ message: "Refresh token отсутствует" });
-  }
-
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const user = await User.findById(decoded.id);
-
-    if (!user || user.refreshToken !== refreshToken) {
-      return res.status(401).json({ message: "Невалидный refresh token" });
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token отсутствует" });
     }
 
-    const accessToken = generateAccessToken(user._id);
-    return res.json({ accessToken });
-  } catch (e) {
-    return res.status(401).json({ message: "Невалидный refresh token" });
+    try {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      const user = await User.findById(decoded.id);
+
+      if (!user || user.refreshToken !== refreshToken) {
+        return res.status(401).json({ message: "Невалидный refresh token" });
+      }
+
+      const accessToken = generateAccessToken(user._id);
+      return res.json({ accessToken });
+    } catch (e) {
+      return res.status(401).json({ message: "Невалидный refresh token" });
+    }
   }
-}
+
+  async logout(req, res) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+
+      if (!refreshToken) {
+        return res.status(400).json({ message: "Refresh token отсутствует" });
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        return res.status(400).json({ message: "Пользователь не найден" });
+      }
+
+      user.refreshToken = null;
+      await user.save();
+
+      res.clearCookie("refreshToken");
+
+      return res.json({ message: "Вы успешно вышли" });
+    } catch (e) {
+      console.error(e);
+      return res.status(500).json({ message: "Ошибка при выходе" });
+    }
+  }
 }
 
 module.exports = new authController();

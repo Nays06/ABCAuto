@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class SocketService {
   }>({});
   public userStatus$ = this.userStatusSubject.asObservable();
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.socket = io(this.SERVER_URL, {
       transports: ['websocket'],
     });
@@ -25,20 +26,52 @@ export class SocketService {
       currentStatus[data.userId] = data.isOnline;
       this.userStatusSubject.next(currentStatus);
     });
+
+    authService.getUserID().subscribe(
+      (res: any) => {
+        console.log(res);
+        
+        this.socket.emit('joinUserRoom', res.id);
+      },
+      (err: any) => {
+        console.error(err);
+      }
+    )
   }
 
   joinRoom(chatId: string) {
     this.socket.emit('joinRoom', chatId);
   }
 
+  onNewChat(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('newChat', (chat) => {
+        observer.next(chat);
+      });
+    });
+  }
+
   sendMessage(message: any) {
     this.socket.emit('newMessage', message);
   }
 
-  onNewMessage(): Observable<any> {
+onNewMessage(): Observable<any> {
+  return new Observable((observer) => {
+    this.socket.on('newMessage', (message) => {
+      console.log('Получено новое сообщение:', message);
+      observer.next(message);
+    });
+  });
+}
+
+emitMessageRead(data: { chatId: string; messageId: string; recipientId: string }) {
+    this.socket.emit('messageRead', data);
+  }
+
+  onMessageRead(): Observable<{ messageId: string; chatId: string }> {
     return new Observable((observer) => {
-      this.socket.on('newMessage', (message) => {
-        observer.next(message);
+      this.socket.on('messageRead', (data) => {
+        observer.next(data);
       });
     });
   }

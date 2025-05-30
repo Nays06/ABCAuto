@@ -12,5 +12,6 @@ router.get("/profile/:id", authController.getProfileToId);
 router.get("/avatar", authMiddleware, authController.getAvatar);
 router.get("/id", authMiddleware, authController.getID);
 router.get('/refresh', authController.refresh);
+router.post('/logout', authController.logout);
 
 module.exports = router;

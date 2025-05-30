@@ -26,7 +26,6 @@ const upload = multer({
             callback(new Error("Ошибка загрузки"), false);// БЛОКИРУЕМ ЗАГРУЗКУ ФАЙЛА
         }
 
-
     },
     limits: {
         fileSize: 1024 * 1024 * 20 // Макс размеер  20 мб
