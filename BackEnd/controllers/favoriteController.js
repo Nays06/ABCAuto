@@ -7,8 +7,13 @@ class favoriteController {
 
     const user = await User.findById(userId);
 
-    if(!user) {
-      return res.status(401).json({ message: "Пользователя с таким ID не существует", isNotExists: true })
+    if (!user) {
+      return res
+        .status(401)
+        .json({
+          message: "Пользователя с таким ID не существует",
+          isNotExists: true,
+        });
     }
 
     res.status(200).json({ message: "Успешно", favorites: user.favorites });
@@ -19,13 +24,15 @@ class favoriteController {
       const userId = req.user.id;
       const { carId } = req.body;
 
-    await User.findByIdAndUpdate(userId, {
-      $push: {
-        favorites: { carId, createdAt: new Date() }
-      }
-    });
+      await User.findByIdAndUpdate(userId, {
+        $push: {
+          favorites: { carId, createdAt: new Date() },
+        },
+      });
 
-      res.status(200).json({ message: "Машина была успешно добавлена в избранное" });
+      res
+        .status(200)
+        .json({ message: "Машина была успешно добавлена в избранное" });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Ошибка сервера" });
@@ -37,7 +44,10 @@ class favoriteController {
       const userId = req.user.id;
       const carId = req.params.id;
 
-      await User.updateOne({ _id: userId }, { $pull: { favorites: { carId } } });
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { favorites: { carId } } }
+      );
 
       res
         .status(200)
@@ -49,27 +59,27 @@ class favoriteController {
   }
 
   async getUserFavoriteCars(req, res) {
-  try {
-    const userId = req.user.id;
+    try {
+      const userId = req.user.id;
 
-    const user = await User.findById(userId)
-      .select('favorites')
-      .lean();
+      const user = await User.findById(userId).select("favorites").lean();
 
-    const favoriteCarIds = user.favorites
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .map(fav => fav.carId);
+      const favoriteCarIds = user.favorites
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .map((fav) => fav.carId);
 
-    const favoriteCars = await Car.find({
-      _id: { $in: favoriteCarIds }
-    }).lean();
+      const favoriteCars = await Car.find({
+        _id: { $in: favoriteCarIds },
+      }).lean();
 
-    const carsById = {};
-    favoriteCars.forEach(car => { carsById[car._id] = car; });
+      const carsById = {};
+      favoriteCars.forEach((car) => {
+        carsById[car._id] = car;
+      });
 
-    const sortedCars = favoriteCarIds.map(id => carsById[id]);
+      const sortedCars = favoriteCarIds.map((id) => carsById[id]);
 
-    res.status(200).json(sortedCars);
+      res.status(200).json(sortedCars);
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Ошибка сервера" });

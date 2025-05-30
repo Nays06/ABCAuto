@@ -3,7 +3,7 @@ const cors = require("cors");
 const { default: mongoose } = require("mongoose");
 const http = require("http");
 const socket = require("./socket");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 
 const authRoute = require("./routes/authRoute");
 const carRoute = require("./routes/carRoute");
@@ -23,10 +23,12 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:4200'
-}));
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:4200",
+  })
+);
 
 app.use("/auth", authRoute);
 app.use("/cars", carRoute);

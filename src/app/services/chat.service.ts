@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SocketService } from './socket.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,8 @@ export class ChatService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private toast: HotToastService
   ) {
     this.loadChats();
     this.subscribeToNewMessages();
@@ -144,7 +146,10 @@ export class ChatService {
             );
         },
         (e: any) => {
-          console.error(e);
+          console.error("2", e);
+          if(e.status === 401) {
+            this.toast.error("Для выполнения этого действия нужно быть авторизованным")
+          }
         }
       );
   }

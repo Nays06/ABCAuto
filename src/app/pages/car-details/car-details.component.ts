@@ -68,7 +68,7 @@ export class CarDetailsComponent {
     "Предподавателям скидка есть? ",
   ]
 
-  qwe() {
+  sendMessage() {
     this.chatService.sendMessageWithOutChatId({ advertisementId: this.car._id, buyerId: this.myId, sellerId: this.car.sellerId, senderId: this.myId, recipientId: this.car.sellerId, content: this.message.trim() })
   }
 

@@ -8,14 +8,50 @@
 .chat-item {
   display: flex;
   align-items: center;
-  padding: 1rem 0;
+  padding: 1rem;
   border-bottom: 1px solid #eee;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  width: 100%;
+  position: relative;
+  border-radius: 8px;
+  margin-bottom: 4px;
+
+  &.unread {
+    background-color: rgba(var(--primary-color-rgb), 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    .sender-name {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .last-message {
+      color: #555;
+      font-weight: 500;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 60%;
+      width: 3px;
+      background: var(--primary-color);
+      border-radius: 0 3px 3px 0;
+    }
+  }
 }
 
 .chat-item:hover {
   background-color: #f1f1f1;
+}
+
+.images {
+  position: relative;
+  margin-right: 1rem;
 }
 
 .car-image {
@@ -23,31 +59,85 @@
   height: 60px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 1rem;
+}
+
+.user-avatar {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  bottom: -5px;
+  right: -5px;
+  border-radius: 50%;
+  overflow: hidden;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .chat-info {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding-right: 1rem;
 }
 
 .car-title {
-  font-weight: bold;
-  font-size: 1rem;
-  color: #333;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
 }
 
 .sender-name {
-  font-size: 0.9rem;
-  color: #555;
-  margin-top: 0.2rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.online {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: 0 6px;
+  background-color: #02d15c;
+}
+
+.point {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin: 0 6px;
+  background-color: #999;
 }
 
 .last-message {
-  font-size: 0.85rem;
+  font-size: 14px;
   color: #777;
-  margin-top: 0.2rem;
+  margin-top: 0.3rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+  transition: all 0.2s ease;
+}
+
+.message-additional {
+  display: flex;
+  position: absolute;
+  top: 40%;
+  right: 15px;
+}
+
+.message-date {
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+  white-space: nowrap;
+  margin-left: 5px;
 }

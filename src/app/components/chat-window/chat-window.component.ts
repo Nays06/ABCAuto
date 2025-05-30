@@ -1,10 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
-import { ActivatedRoute } from '@angular/router';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SocketService } from '../../services/socket.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-chat-window',
@@ -26,7 +27,9 @@ export class ChatWindowComponent {
     private chatService: ChatService,
     private authService: AuthService,
     private socketService: SocketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private toast: HotToastService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +81,8 @@ export class ChatWindowComponent {
       },
       (err: any) => {
         console.error(err);
+        this.toast.error(err.error.message)
+        this.router.navigate(['/chats']);
       }
     );
   }

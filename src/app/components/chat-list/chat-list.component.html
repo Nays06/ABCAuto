@@ -2,26 +2,94 @@
   <div
     *ngFor="let chat of chats"
     class="chat-item"
+    [class.unread]="
+      chat.lastMessage.senderId._id !== currentUserId &&
+      !chat.lastMessage.isRead
+    "
     (click)="openChat(chat._id)"
   >
-    <img
-      [src]="chat.advertisementId.images[0]"
-      alt="Фото авто"
-      class="car-image"
-    />
+    <div class="images">
+      <img
+        [src]="chat.advertisementId.images[0]"
+        alt="Фото авто"
+        class="car-image"
+      />
+
+      <img
+        [src]="`http://localhost:5555/${chat.buyerId._id === currentUserId ? chat.sellerId.avatar : chat.buyerId.avatar}`"
+        alt="Ава"
+        class="user-avatar"
+      />
+    </div>
 
     <div class="chat-info">
+      <div class="sender-name">
+        {{ chat.buyerId._id === currentUserId ? `${chat.sellerId.name} ${chat.sellerId.surname}` : `${chat.buyerId.name} ${chat.buyerId.surname}` }}
+        <div *ngIf="chat.isOnline" class="online"></div>
+      </div>
+
       <div class="car-title">
         {{ chat.advertisementId.brand }} {{ chat.advertisementId.model }}
+        <div class="point"></div>
+        {{ formatPrice(chat.advertisementId?.price) }} ₽
       </div>
 
-      <div class="sender-name">
+      <div
+        class="last-message"
+        *ngIf="chat.lastMessage.senderId._id !== currentUserId"
+      >
         {{ chat.lastMessage.senderId.name }}
-        {{ chat.lastMessage.senderId.surname }}
+        {{ chat.lastMessage.senderId.surname }}: {{ chat.lastMessage.content }}
+      </div>
+      <div
+        class="last-message"
+        *ngIf="chat.lastMessage.senderId._id === currentUserId"
+      >
+        Вы: {{ chat.lastMessage.content }}
       </div>
 
-      <div class="last-message">
-        {{ chat.lastMessage.content }}
+      <div class="message-additional">
+        <div *ngIf="chat.lastMessage.senderId._id === currentUserId">
+          <div *ngIf="!chat.lastMessage.isRead">
+            <svg
+              viewBox="0 0 14 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-icon-JUE8Z status-icon-root-kGiuI"
+              data-marker="icon/messenger-statusDelivered"
+              style="width: 16px; height: 16px; color: var(--primary-color)"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M8.9247 9.92421L13.9247 4.92421L13.0762 4.07568L8.50044 8.65142L6.4247 6.57568L5.57617 7.42421L8.07617 9.92421L8.50044 10.3485L8.9247 9.92421Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+          <div *ngIf="chat.lastMessage.isRead">
+            <svg
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-icon-JUE8Z status-icon-root-kGiuI"
+              data-marker="icon/messenger-statusRead"
+              style="width: 16px; height: 16px; color: var(--primary-color)"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M10.235 4.177a.75.75 0 00-1.058.089l-4.973 5.877L2.28 8.22a.75.75 0 00-1.06 1.06l2.5 2.5c.31.31.82.29 1.103-.045l5.5-6.5a.75.75 0 00-.088-1.058zM8.27 9.21l-.973 1.149L8.72 11.78c.31.31.82.29 1.103-.045l5.5-6.5a.75.75 0 10-1.146-.97l-4.973 5.878-.934-.934z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="message-date">
+          {{
+            formatMskDate(chat.lastMessage.sentAt || chat.lastMessage.createdAt)
+          }}
+        </div>
       </div>
     </div>
   </div>

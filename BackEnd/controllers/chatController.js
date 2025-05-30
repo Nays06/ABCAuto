@@ -63,6 +63,7 @@ class chatController {
         lastMessage: {
           content,
           senderId,
+          isRead: false,
           sentAt: new Date(),
         },
       });
@@ -99,7 +100,19 @@ class chatController {
     try {
       const chatId = req.params.chatId;
 
+      if (chatId.length !== 24) {
+        return res
+          .status(404)
+          .json({ message: "Чата с таким ID не существует!" });
+      }
+
       const chatInfo = await Chat.findById(chatId);
+
+      if (!chatInfo) {
+        return res
+          .status(404)
+          .json({ message: "Чата с таким ID не существует!" });
+      }
 
       const chatMessages = await Message.find({ chatId }).sort({
         createdAt: 1,

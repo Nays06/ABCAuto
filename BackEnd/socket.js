@@ -1,4 +1,5 @@
 let io = null;
+const Chat = require("./models/Chat");
 const User = require("./models/User");
 const activeUsers = new Map();
 
@@ -44,15 +45,21 @@ module.exports = {
         io.to(message.chatId).emit("newMessage", message);
       });
 
-      socket.on('joinUserRoom', (userId) => {
+      socket.on("joinUserRoom", (userId) => {
         socket.join(userId);
         console.log(`Клиент ${userId} подключился к комнате`);
       });
 
-      socket.on('messageRead', async ({ chatId, messageId, recipientId }) => {
+      socket.on("messageRead", async ({ chatId, messageId, recipientId }) => {
         console.log("read", messageId);
-        
-        io.to(chatId).emit('messageRead', { messageId, chatId });
+
+        await Chat.findByIdAndUpdate(chatId, {
+          $set: {
+            "lastMessage.isRead": true,
+          },
+        });
+
+        io.to(chatId).emit("messageRead", { messageId, chatId });
       });
 
       const heartbeatInterval = setInterval(async () => {

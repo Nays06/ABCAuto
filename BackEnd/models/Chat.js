@@ -10,6 +10,7 @@ const Chat = new Schema({
   lastMessage: {
     content: String,
     senderId: { type: Schema.Types.ObjectId, ref: 'Users' },
+    isRead: { type: Boolean, default: false },
     sentAt: Date
   }
 });
