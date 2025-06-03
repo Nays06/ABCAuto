@@ -1,0 +1,32 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <h2>Оставить отзыв</h2>
+    <p><strong>Продавец:</strong> {{ data.seller.name }} {{ data.seller.surname }}</p>
+    <p><strong>Автомобиль:</strong> {{ data.car.brand }} {{ data.car.model }} {{ data.car.year }}</p>
+
+    <form (ngSubmit)="submitReview()">
+      <!-- Рейтинг звёздами -->
+      <div class="rating">
+        <span 
+          *ngFor="let star of [1, 2, 3, 4, 5]" 
+          (click)="setRating(star)"
+          [class.filled]="star <= rating">
+          ★
+        </span>
+      </div>
+
+      <!-- Текст отзыва -->
+      <textarea
+        name="comment"
+        [(ngModel)]="comment"
+        placeholder="Ваш отзыв..."
+        required
+        minlength="10">
+      </textarea>
+
+      <!-- Кнопка отправки -->
+      <button type="submit" [disabled]="!(comment.length >= 10 && rating)">Отправить</button>
+    </form>
+  </div>
+</div>

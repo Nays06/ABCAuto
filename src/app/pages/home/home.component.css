@@ -8,16 +8,32 @@
 .cars {
   display: grid;
   grid-template-columns: repeat(4, 350px);
-  gap: 40px;
+  row-gap: 40px;
   width: 80%;
   margin: 40px auto;
   justify-content: space-between;
   align-items: center;
 }
 
+.show-more {
+  color: white;
+  padding: 20px 25px;
+  background-color: var(--primary-color);
+  margin: 0 auto;
+  width: fit-content;
+  user-select: none;
+  cursor: pointer;
+  font-size: 17px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--primary-color-hover);
+  }
+}
+
 .section {
   width: 80%;
-  margin: 0 auto;
+  margin: 30px auto;
 }
 
 .section-title {
@@ -26,7 +42,7 @@
 }
 
 .section-cont {
-  margin-top: 30px;
+  margin-top: 20px;
   display: grid;
   grid-template-columns: repeat(3, 32%);
   justify-content: space-between;

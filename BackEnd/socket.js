@@ -47,7 +47,6 @@ module.exports = {
 
       socket.on("joinUserRoom", (userId) => {
         socket.join(userId);
-        console.log(`Клиент ${userId} подключился к комнате`);
       });
 
       socket.on("messageRead", async ({ chatId, messageId, recipientId }) => {

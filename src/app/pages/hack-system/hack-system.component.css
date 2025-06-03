@@ -1,0 +1,135 @@
+@font-face {
+  font-family: "BauSF Medium";
+  font-style: normal;
+  font-weight: normal;
+  src: local("BauSF Medium"), url("/assets/fonts/BauSF.woff") format("woff");
+}
+
+.hack-container {
+  background-color: #000;
+  color: #0f0;
+  height: 100vh;
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.terminal {
+  background-color: #111;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+  height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.terminal-header {
+  background: #1a1a1a;
+  padding: 8px 15px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+}
+
+.red-btn,
+.yellow-btn,
+.green-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.red-btn {
+  background: #ff5f56;
+}
+.yellow-btn {
+  background: #ffbd2e;
+}
+.green-btn {
+  background: #27c93f;
+}
+
+.title {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.terminal-body {
+  padding: 15px;
+  overflow-y: auto;
+  flex-grow: 1;
+  height: calc(100% - 40px);
+}
+
+.terminal-line {
+  margin-bottom: 5px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  font-family: "BauSF Medium";
+
+  &.error {
+    color: red;
+  }
+}
+
+.command-line {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-family: "BauSF Medium";
+}
+
+.prompt {
+  color: #0f0;
+  margin-right: 8px;
+  font-family: "BauSF Medium";
+}
+
+.command-input {
+  background: transparent;
+  border: none;
+  color: #0f0;
+  flex-grow: 1;
+  font-size: 16px;
+  outline: none;
+  caret-color: #0f0;
+  font-family: "BauSF Medium";
+}
+
+.command-input::placeholder {
+  color: #0a0;
+  opacity: 0.5;
+}
+
+.fullscreen-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 255, 0, 0.1);
+  color: #0f0;
+  border: 1px solid #0f0;
+  border-radius: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.fullscreen-btn:hover {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+.balance-display {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 255, 0, 0.1);
+  color: #0f0;
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: 1px solid #0f0;
+  font-family: "BauSF Medium";
+}

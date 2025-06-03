@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { NgIf } from '@angular/common';
+import { map, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,8 @@ export class HeaderComponent {
   avatarUrl: any = '';
   favoriteCount = 0;
   isAuthenticated = false;
+  balance: number = 0;  // Теперь balance существует
+  private userSub!: Subscription;
 
   @ViewChild('dropdown') dropdown!: ElementRef;
   @ViewChild('avatar') avatar!: ElementRef;
@@ -34,6 +37,10 @@ export class HeaderComponent {
         this.isAuthenticated = false;
       }
     });
+
+    this.authService.balance$.subscribe((balance) => {
+      this.balance = balance
+    })
 
     this.favoriteService.favoritesCount$.subscribe((count) => {
       this.favoriteCount = count;
@@ -73,11 +80,18 @@ export class HeaderComponent {
     this.router.navigate(['/chats']);
   }
 
+  goToBalance() {
+    const elem = document.documentElement;
+    elem.requestFullscreen();
+
+    this.router.navigate(['/hack']);
+  }
+
   logout() {
     this.authService.logout().subscribe({
       next: () => {
         this.router.navigate(['/login']);
-        this.favoriteService.setCount(0)
+        this.favoriteService.setCount(0);
         this.isDropdownOpen = false;
         this.isAuthenticated = false;
       },
@@ -104,5 +118,9 @@ export class HeaderComponent {
     ) {
       this.isDropdownOpen = false;
     }
+  }
+
+  formatBalance(price: number): string {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 }

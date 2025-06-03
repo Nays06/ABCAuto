@@ -1,0 +1,28 @@
+.compilation-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.compilation-title {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.compilation-description {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cars {
+  display: grid;
+  grid-template-columns: repeat(4, 350px);
+  row-gap: 40px;
+  width: 80%;
+  margin: 50px auto;
+  justify-content: space-between;
+  align-items: center;
+}

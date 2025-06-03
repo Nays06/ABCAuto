@@ -2,11 +2,15 @@
   <app-video-slider />
 </div>
 
-<app-filter />
+<app-filter (filteredCars)="onFilterChanged($event)" />
 
-<div class="cars">
-  <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites" />
+<div class="cars" *ngIf="!isLoading">
+    <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites"/>
 </div>
+
+<div class="show-more" *ngIf="!isLoading && cars.length === 12" (click)="goTocatalog()">Показать больше</div>
+
+<app-cars-empty *ngIf="isLoading" />
 
 <div class="section">
   <div class="section-title">Наши подборки</div>
@@ -18,7 +22,7 @@
       </div>
       <div class="compilation-cont">
         <div class="compilation-title">{{ compilation.title }}</div>
-        <div class="compilation-btn">Посмотреть</div>
+        <div class="compilation-btn" (click)="goToCompilation(compilation.compilation)">Посмотреть</div>
       </div>
     </div>
   </div>

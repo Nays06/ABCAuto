@@ -10,7 +10,7 @@
   >
     <div class="images">
       <img
-        [src]="chat.advertisementId.images[0]"
+        [src]="chat.advertisementId.images[0].slice(0, chat.advertisementId.images[0].indexOf('\\')) === 'uploads' ? `http://localhost:5555/${chat.advertisementId.images[0]}` : chat.advertisementId.images[0]"
         alt="Фото авто"
         class="car-image"
       />

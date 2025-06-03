@@ -1,6 +1,15 @@
 const Brands = require("../models/Brands");
 const Car = require("../models/Car");
 const User = require("../models/User");
+const Sale = require("../models/Sale");
+const Review = require("../models/Review");
+const mongoose = require("mongoose");
+
+const COMPILATION_BODY_TYPES = {
+  family: ["SUV", "Crossover", "Van", "Wagon"],
+  city: ["Hatchback", "Sedan", "Convertible", "Small crossover"],
+  journey: ["SUV", "Crossover", "Pickup"],
+};
 
 class CarController {
   async getBrands(req, res) {
@@ -15,46 +24,42 @@ class CarController {
 
   async getCars(req, res) {
     try {
-      const limit = req.query.limit || 12;
-      const page = req.query.page || 1;
+      const limit = Number(req.query.limit) || 12;
+      const page = Number(req.query.page) || 1;
       const skip = (page - 1) * limit;
-      const brand = req.query.brand;
-      const driveType = req.query.driveType;
-      const bodyType = req.query.bodyType;
+      const { brand, driveType, bodyType, price, compilation } = req.query;
 
       const filter = {};
 
-      if (brand) {
-        filter.brand = brand;
+      if (bodyType) filter.bodyType = bodyType;
+
+      if (compilation && COMPILATION_BODY_TYPES[compilation]) {
+        filter.bodyType = { $in: COMPILATION_BODY_TYPES[compilation] };
       }
 
-      if (req.query.price) {
-        const [priceFrom, priceTo] = req.query.price.split("-").map(Number);
+      if (brand) filter.brand = brand;
+      if (driveType) filter.driveType = driveType;
+
+      if (price) {
+        const [min, max] = price.split("-").map(Number);
         filter.price = {};
-        if (!isNaN(priceFrom)) filter.price.$gte = priceFrom;
-        if (!isNaN(priceTo)) filter.price.$lte = priceTo;
-      }
-
-      if (driveType) {
-        filter.driveType = driveType;
-      }
-
-      if (bodyType) {
-        filter.bodyType = bodyType;
+        if (!isNaN(min)) filter.price.$gte = min;
+        if (!isNaN(max)) filter.price.$lte = max;
       }
 
       const cars = await Car.aggregate([
         { $match: filter },
-        { $sample: { size: limit } },
         { $skip: skip },
+        { $limit: limit },
       ]);
 
       res.status(200).json(cars);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       res.status(500).json({ message: "Ошибка на сервере" });
     }
   }
+
   async addCar(req, res) {
     try {
       const {
@@ -117,9 +122,22 @@ class CarController {
       const id = req.params.id;
       const car = await Car.findById(id);
       const seller = await User.findById(car.sellerId);
-      res
-        .status(200)
-        .json({ message: "Успешно!", carData: car, sellerData: seller });
+      let sale;
+      if (!car.available) {
+        sale = await Sale.findOne({ carId: car._id });
+      }
+
+      const haveReview = await Review.findOne({ car: car._id })
+
+      console.log(id, car.sellerId, car._id)
+
+      res.status(200).json({
+        message: "Успешно!",
+        carData: car,
+        sellerData: seller,
+        saleInfo: sale,
+        haveReview: !!haveReview
+      });
     } catch (err) {
       console.log(err);
       res.status(400).json({ message: "Ошибка получения автомобиля" });
@@ -198,6 +216,75 @@ class CarController {
     } catch (e) {
       res.status(500).json({ message: "Ошибка удаления" });
       console.log(e);
+    }
+  }
+
+  async buyCar(req, res) {
+    try {
+      const { id } = req.body;
+      const userId = req.user.id;
+
+      if (!id) {
+        return res.status(400).json({ message: "Не указан ID автомобиля" });
+      }
+
+      const [car, user] = await Promise.all([
+        Car.findById(id),
+        User.findById(userId),
+      ]);
+
+      if (!car) {
+        return res.status(404).json({ message: "Автомобиль не найден" });
+      }
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      if (!car.available) {
+        return res.status(409).json({ message: "Этот автомобиль уже продан" });
+      }
+
+      if (user.balance < car.price) {
+        return res
+          .status(403)
+          .json({ message: "На балансе недостаточно средств" });
+      }
+
+      if (car.sellerId.toString() === userId.toString()) {
+        return res
+          .status(400)
+          .json({ message: "Нельзя купить собственный автомобиль" });
+      }
+
+      const updatedBuyer = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { balance: -car.price } },
+        { new: true }
+      );
+
+      await User.findByIdAndUpdate(car.sellerId, {
+        $inc: { balance: car.price },
+      });
+
+      await Car.findByIdAndUpdate(id, { available: false });
+
+      const sale = new Sale({
+        buyerId: userId,
+        sellerId: car.sellerId,
+        carId: car._id,
+        price: car.price,
+      });
+
+      await sale.save();
+
+      res.status(200).json({
+        message: "Покупка совершена успешно",
+        newBalance: updatedBuyer.balance,
+        saleInfo: sale,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Ошибка покупки машины" });
     }
   }
 }

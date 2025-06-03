@@ -8,7 +8,6 @@ const User = new Schema({
     avatar: { type: String },
     roles: [{ type: String, ref: "Role" }],
     registrationDate: { type: Date, default: Date.now },
-    reviews: { type: Array, default: [] },
     favorites: [{
         carId: { type: String },
         createdAt: { type: Date, default: Date.now }
@@ -16,6 +15,7 @@ const User = new Schema({
     isOnline: { type: Boolean },
     lastSeen: { type: Date },
     refreshToken: { type: String },
+    balance: { type: Number, default: 0 }
 })
 
 module.exports = model("Users", User)

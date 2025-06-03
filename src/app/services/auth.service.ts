@@ -8,6 +8,12 @@ import { BehaviorSubject, tap } from 'rxjs';
 export class AuthService {
   private avatarSubject = new BehaviorSubject<string | null>(null);
   currentAvatar$ = this.avatarSubject.asObservable();
+  private balance = new BehaviorSubject<number>(0);
+  public balance$ = this.balance.asObservable();
+
+  updateBalance(balance: number) {
+    this.balance.next(balance);
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -63,5 +69,13 @@ export class AuthService {
           localStorage.removeItem('token');
         })
       );
+  }
+
+  getBalance() {
+    return this.http.get(`${this.apiURL}/balance`);
+  }
+
+  setBalance(balance: number) {
+    return this.http.post(`${this.apiURL}/balance`, { balance });
   }
 }

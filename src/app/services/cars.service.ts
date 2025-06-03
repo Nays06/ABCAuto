@@ -26,10 +26,14 @@ export class CarsService {
   }
   
   editCarData(id: String, data: any) {
-    return this.http.patch(`${this.apiUrl}/car/${id}`, data)
+    return this.http.patch(`${this.apiUrl}/car/${id}`, Object.fromEntries(data.entries()))
   }
   
   deleteCar(id: String) {
     return this.http.delete(`${this.apiUrl}/car/${id}`)
+  }
+
+  buyCar(id: String) {
+    return this.http.post(`${this.apiUrl}/buy`, { id })
   }
 }

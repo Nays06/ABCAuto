@@ -36,15 +36,14 @@
 
     <div class="form-group">
       <label for="year" class="required">Год выпуска</label>
-      <input
-        type="number"
-        id="year"
+      <ng-select
+        [items]="years"
+        bindLabel="name"
+        placeholder="Год выпуска"
         formControlName="year"
-        placeholder="2025"
-        min="1900"
-        [max]="currentYear"
         [ngClass]="{ 'is-invalid': submitted && f['year'].errors }"
-      />
+      >
+      </ng-select>
       <div *ngIf="submitted && f['year'].errors" class="invalid-feedback">
         <div *ngIf="f['year'].errors['required']">
           Поле обязательно для заполнения
@@ -57,13 +56,14 @@
 
     <div class="form-group">
       <label for="engine" class="required">Двигатель</label>
-      <input
-        type="text"
-        id="engine"
+      <ng-select
+        [items]="engines"
+        bindLabel="name"
+        placeholder="Двигатель"
         formControlName="engine"
-        placeholder="2.5L 4-цилиндровый"
         [ngClass]="{ 'is-invalid': submitted && f['engine'].errors }"
-      />
+      >
+      </ng-select>
       <div *ngIf="submitted && f['engine'].errors" class="invalid-feedback">
         <div *ngIf="f['engine'].errors['required']">
           Поле обязательно для заполнения
@@ -73,14 +73,18 @@
 
     <div class="form-group">
       <label for="transmission" class="required">Трансмиссия</label>
-      <input
-        type="text"
-        id="transmission"
+      <ng-select
+        [items]="transmissionTypes"
+        bindLabel="name"
+        placeholder="Тип трансмиссии"
         formControlName="transmission"
-        placeholder="2.5L 4-цилиндровый"
         [ngClass]="{ 'is-invalid': submitted && f['transmission'].errors }"
-      />
-      <div *ngIf="submitted && f['transmission'].errors" class="invalid-feedback">
+      >
+      </ng-select>
+      <div
+        *ngIf="submitted && f['transmission'].errors"
+        class="invalid-feedback"
+      >
         <div *ngIf="f['transmission'].errors['required']">
           Поле обязательно для заполнения
         </div>
@@ -109,18 +113,14 @@
 
     <div class="form-group">
       <label for="fuelType" class="required">Тип топлива</label>
-      <select
-        id="fuelType"
+      <ng-select
+        [items]="fuelTypes"
+        bindLabel="name"
+        placeholder="Тип топлива"
         formControlName="fuelType"
         [ngClass]="{ 'is-invalid': submitted && f['fuelType'].errors }"
       >
-        <option value="" disabled selected>Выберите тип</option>
-        <option value="Gasoline">Бензин</option>
-        <option value="Diesel">Дизель</option>
-        <option value="Hybrid">Гибрид</option>
-        <option value="Electric">Электрический</option>
-        <option value="Gas">Газ</option>
-      </select>
+      </ng-select>
       <div *ngIf="submitted && f['fuelType'].errors" class="invalid-feedback">
         <div *ngIf="f['fuelType'].errors['required']">
           Поле обязательно для заполнения
@@ -145,13 +145,14 @@
 
     <div class="form-group">
       <label for="country">Страна производитель</label>
-      <input
-        type="text"
-        id="country"
+      <ng-select
+        [items]="countries"
+        bindLabel="name"
+        placeholder="Страна-производитель"
         formControlName="country"
-        placeholder="Россия"
         [ngClass]="{ 'is-invalid': submitted && f['country'].errors }"
-      />
+      >
+      </ng-select>
       <div
         *ngIf="submitted && f['country'].errors"
         class="invalid-feedback"
@@ -160,13 +161,14 @@
 
     <div class="form-group">
       <label for="driveType">Привод</label>
-      <input
-        type="text"
-        id="driveType"
+      <ng-select
+        [items]="driveTypes"
+        bindLabel="name"
+        placeholder="Тип привода"
         formControlName="driveType"
-        placeholder="FWD"
         [ngClass]="{ 'is-invalid': submitted && f['driveType'].errors }"
-      />
+      >
+      </ng-select>
       <div
         *ngIf="submitted && f['driveType'].errors"
         class="invalid-feedback"
@@ -175,13 +177,14 @@
 
     <div class="form-group">
       <label for="bodyType">Тип кузова</label>
-      <input
-        type="text"
-        id="bodyType"
+      <ng-select
+        [items]="bodyTypes"
+        bindLabel="name"
+        placeholder="Тип кузова"
         formControlName="bodyType"
-        placeholder="Sedan"
         [ngClass]="{ 'is-invalid': submitted && f['bodyType'].errors }"
-      />
+      >
+      </ng-select>
       <div
         *ngIf="submitted && f['bodyType'].errors"
         class="invalid-feedback"
@@ -190,13 +193,14 @@
 
     <div class="form-group">
       <label for="color" class="required">Цвет</label>
-      <input
-        type="text"
-        id="color"
+      <ng-select
+        [items]="colors"
+        bindLabel="name"
+        placeholder="Цвет"
         formControlName="color"
-        placeholder="Красный"
         [ngClass]="{ 'is-invalid': submitted && f['color'].errors }"
-      />
+      >
+      </ng-select>
       <div *ngIf="submitted && f['color'].errors" class="invalid-feedback">
         <div *ngIf="f['color'].errors['required']">
           Поле обязательно для заполнения
@@ -223,7 +227,6 @@
         </div>
       </div>
     </div>
-
     <div class="form-actions">
       <button type="submit" class="submit-btn">Изменить автомобиль</button>
       <button type="button" class="reset-btn" (click)="onReset()">

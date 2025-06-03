@@ -1,5 +1,7 @@
 <app-filter (filteredCars)="onFilterChanged($event)"></app-filter>
 
-<div class="cars">
+<div class="cars" *ngIf="!isLoading">
   <app-car-card *ngFor="let car of cars" [car]="car" [favorites]="allFavorites" />
 </div>
+
+<app-cars-empty *ngIf="isLoading" />

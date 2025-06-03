@@ -10,5 +10,6 @@ router.post("/add", authMiddleware, upload.array("image[]", 10), controller.addC
 router.get("/car/:id", controller.getCar)
 router.patch("/car/:id", authMiddleware, controller.editCar)
 router.delete("/car/:id", authMiddleware, controller.deleteCar)
+router.post("/buy", authMiddleware, controller.buyCar)
 
 module.exports = router

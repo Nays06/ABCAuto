@@ -19,25 +19,32 @@ class favoriteController {
     res.status(200).json({ message: "Успешно", favorites: user.favorites });
   }
 
-  async addToFavorites(req, res) {
-    try {
-      const userId = req.user.id;
-      const { carId } = req.body;
+async addToFavorites(req, res) {
+  try {
+    const userId = req.user.id;
+    const { carId } = req.body;
 
-      await User.findByIdAndUpdate(userId, {
-        $push: {
-          favorites: { carId, createdAt: new Date() },
-        },
-      });
+    const user = await User.findById(userId);
+    const alreadyExists = user.favorites.some(item => item.carId.toString() === carId);
 
-      res
-        .status(200)
-        .json({ message: "Машина была успешно добавлена в избранное" });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Ошибка сервера" });
+    if (alreadyExists) {
+      return res.status(400).json({ message: "Эта машина уже есть в избранном" });
     }
+
+    await User.findByIdAndUpdate(userId, {
+      $push: {
+        favorites: { carId, createdAt: new Date() },
+      },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Машина была успешно добавлена в избранное" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Ошибка сервера" });
   }
+}
 
   async removeFromFavorites(req, res) {
     try {
