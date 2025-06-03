@@ -17,6 +17,7 @@ const Car = new Schema({
     price: { type: Number, required: true },
     images: { type: Array, required: true },
     sellerId: { type: String, required: true },
+    available: { type: Boolean, default: true },
     registrationDate: { type: Date, default: Date.now },
 })
 

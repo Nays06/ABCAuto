@@ -133,7 +133,7 @@ class authController {
             registrationDate: user.registrationDate,
             adsCount,
             ads,
-            reviewsCount: user.reviews.length,
+            reviewsCount: user?.reviews?.length,
           },
         });
       } else {
@@ -269,6 +269,32 @@ class authController {
     } catch (e) {
       console.error(e);
       return res.status(500).json({ message: "Ошибка при выходе" });
+    }
+  }
+
+  async getBalance(req, res) {
+    try {
+      const user = await User.findById(req.user.id)
+
+      return res.status(200).json(user.balance)
+    } catch(err) {
+      console.error(err);
+      res.status(500).json({ message: "Ошибка вывода баланса" })
+    }
+  }
+
+  async setBalance(req, res) {
+    try {
+      const { balance } = req.body
+
+      await User.findByIdAndUpdate(req.user.id, {
+        balance
+      })
+
+      return res.status(200).json({ message: "Баланс успешно изменен" })
+    } catch (err) {
+      console.log(err)
+      res.status(500).json({ message: "Error balance editing" })
     }
   }
 }

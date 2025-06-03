@@ -29,8 +29,6 @@ export class SocketService {
 
     authService.getUserID().subscribe(
       (res: any) => {
-        console.log(res);
-        
         this.socket.emit('joinUserRoom', res.id);
       },
       (err: any) => {

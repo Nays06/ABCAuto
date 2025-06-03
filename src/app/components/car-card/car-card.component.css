@@ -1,40 +1,79 @@
 .car-card {
   width: 350px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   position: relative;
-}
-
-.car-favourite {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1;
-
-  img {
-    width: 30px;
-    transition: transform 0.3s ease, filter 0.3s ease;
-
-    &:hover {
-      transform: rotate(-7deg) scale(1.1);
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  &:hover {
+    /* transform: translateY(-5px); */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    
+    .car-image {
+      transform: scale(1.03);
+    }
+    
+    .slide-indicators {
+      opacity: 1;
     }
   }
 }
 
+.car-favourite {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+
+  img {
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.2));
+    }
+  }
+}
+
+.car-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  background: var(--primary-color);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .car-image-container {
-  height: 210px;
+  height: 200px;
   position: relative;
-  background: #f8f8f8;
+  background: #f5f5f5;
+  overflow: hidden;
 }
 
 .car-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.3s ease;
+  transition: transform 0.5s ease;
 }
 
 .remaining-text {
@@ -46,10 +85,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;
+  backdrop-filter: blur(1px);
 }
 
 .slide-indicators {
@@ -59,8 +99,10 @@
   justify-content: center;
   position: absolute;
   width: 100%;
-  top: 195px;
+  top: 185px;
   pointer-events: none;
+  opacity: 0;
+  transition: 0.2s;
 }
 
 .indicator {
@@ -78,21 +120,51 @@
 }
 
 .car-container {
-  padding: 5px 10px;
+  padding: 16px;
 }
 
-.car-name {
-  font-size: 17px;
-  margin-bottom: 5px;
+.car-price-container {
+  margin-bottom: 8px;
 }
 
 .car-price {
   font-size: 20px;
   font-weight: 700;
-  margin-bottom: 5px;
+  color: #333;
+  line-height: 1.2;
+}
+
+.car-price-per-month {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.car-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.car-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .car-additionals {
-  color: #1c212899;
-  font-size: 15px;
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  
+  .divider {
+    color: #ddd;
+  }
 }

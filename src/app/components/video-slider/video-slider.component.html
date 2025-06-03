@@ -1,39 +1,39 @@
-<div class="slider">
-  <div class="slide active">
-    <video
-      #videoElement
-      [src]="slides[currentIndex].videoUrl"
-      autoplay
-      muted
-      playsinline
-      preload="auto"
-    ></video>
+<div class="slider-wrapper" [class.show-slider]="isShowSlider" [class.hide-after-animation]="hideBlock">
+  <div class="slider">
+    <div class="slide active">
+      <video
+        #videoElement
+        [src]="slides[currentIndex].videoUrl"
+        muted
+        playsinline
+        preload="auto"
+      ></video>
 
-    <div class="dots">
-      <div
-        class="progress-container"
-        *ngFor="let slide of slides; let i = index"
-        [class.active]="i === currentIndex"
-        (click)="goTo(i)"
-      >
+      <div class="dots">
         <div
-          class="progress-bar"
-          [style.width.%]="progress"
-          *ngIf="i === currentIndex"
-        ></div>
+          class="progress-container"
+          *ngFor="let slide of slides; let i = index"
+          [class.active]="i === currentIndex"
+          (click)="goTo(i)"
+        >
+          <div
+            class="progress-bar"
+            [style.width.%]="progress"
+            *ngIf="i === currentIndex"
+          ></div>
+        </div>
+      </div>
+
+      <div class="text-overlay">
+        <h2>{{ slides[currentIndex].title }}</h2>
+        <p>{{ slides[currentIndex].description }}</p>
       </div>
     </div>
 
-    <div class="text-overlay">
-      <h2>{{ slides[currentIndex].title }}</h2>
-      <p>{{ slides[currentIndex].description }}</p>
-    </div>
-  </div>
+    <button class="nav-btn prev" (click)="prev()">‹</button>
+    <button class="nav-btn next" (click)="next()">›</button>
 
-  <button class="nav-btn prev" (click)="prev()">‹</button>
-  <button class="nav-btn next" (click)="next()">›</button>
-
-  <!-- <div class="dots">
+    <!-- <div class="dots">
     <span
       *ngFor="let slide of slides; let i = index"
       [class.active]="i === currentIndex"
@@ -41,4 +41,10 @@
     >
     </span>
   </div> -->
+  </div>
 </div>
+
+<div class="slider-visible_block" 
+     [class.show-slider]="isShowSlider"
+     [class.hide-after-animation]="hideBlock"
+     (click)="showSlider()"></div>

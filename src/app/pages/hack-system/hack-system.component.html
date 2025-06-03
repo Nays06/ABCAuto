@@ -1,0 +1,35 @@
+<div class="hack-container" [class.fullscreen]="isFullscreen">
+  <div class="terminal">
+    <div class="terminal-header">
+      <span class="red-btn" style="animation: blink 2s infinite 0.3s;"></span>
+      <span class="yellow-btn" style="animation: blink 2s infinite 0.6s;"></span>
+      <span class="green-btn" style="animation: blink 2s infinite 0.9s;"></span>
+      <span class="title">root&#64;hack-terminal:~</span>
+    </div>
+    
+    <div class="terminal-body" (click)="focusInput()">
+      <div *ngFor="let line of terminalOutput" class="terminal-line" [class.error]="line.isError">
+        {{ line.text }}
+      </div>
+      
+      <div class="command-line">
+        <span class="prompt">$</span>
+        <input 
+          class="command-input" 
+          type="text" 
+          (keyup.enter)="executeCommand($event)"
+          autofocus
+          placeholder="Enter command..."
+        >
+      </div>
+    </div>
+  </div>
+
+  <button class="fullscreen-btn" (click)="toggleFullscreen()">
+    {{ isFullscreen ? '◻ Exit' : '◼ FullScreen' }}
+  </button>
+
+  <div class="balance-display" *ngIf="balance > 0">
+    Balance: {{ balance.toLocaleString() }} $
+  </div>
+</div>

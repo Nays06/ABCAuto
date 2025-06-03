@@ -12,6 +12,8 @@ export class VideoSliderComponent {
   currentIndex = 0;
   progress = 0;
   showPlayButton = false;
+  isShowSlider = false;
+  hideBlock = false;
   private progressInterval: any;
 
   slides = [
@@ -29,7 +31,6 @@ export class VideoSliderComponent {
 
   ngAfterViewInit(): void {
     this.setupVideoEvents();
-    this.tryAutoPlay();
   }
 
   ngOnDestroy(): void {
@@ -45,7 +46,8 @@ export class VideoSliderComponent {
 
   prev(): void {
     this.clearProgressInterval();
-    this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    this.currentIndex =
+      (this.currentIndex - 1 + this.slides.length) % this.slides.length;
     this.resetVideo();
     this.tryAutoPlay();
   }
@@ -58,16 +60,17 @@ export class VideoSliderComponent {
 
   playVideo(): void {
     const video = this.videoElement.nativeElement;
-    video.play()
-      .then(() => this.showPlayButton = false)
-      .catch(e => console.error('Video play failed:', e));
+    video
+      .play()
+      .then(() => (this.showPlayButton = false))
+      .catch((e) => console.error('Video play failed:', e));
   }
 
   private setupVideoEvents(): void {
     const video = this.videoElement.nativeElement;
-    
+
     video.onended = () => this.next();
-    
+
     video.onplay = () => {
       this.startProgressTracking();
       this.showPlayButton = false;
@@ -82,8 +85,7 @@ export class VideoSliderComponent {
     setTimeout(() => {
       const video = this.videoElement.nativeElement;
       video.muted = true;
-      video.play()
-        .catch(() => this.showPlayButton = true);
+      video.play().catch(() => (this.showPlayButton = true));
     }, 10);
   }
 
@@ -95,7 +97,7 @@ export class VideoSliderComponent {
 
   private startProgressTracking(): void {
     this.clearProgressInterval();
-    
+
     this.progressInterval = setInterval(() => {
       const video = this.videoElement.nativeElement;
       if (video.duration) {
@@ -109,5 +111,22 @@ export class VideoSliderComponent {
       clearInterval(this.progressInterval);
       this.progressInterval = null;
     }
+  }
+
+  showSlider() {
+    this.isShowSlider = true;
+      setTimeout(() => {
+        this.tryAutoPlay();
+      }, 200);
+
+    setTimeout(() => {
+      this.hideBlock = true;
+    }, 500);
+  }
+
+  handleSlideClick() {
+    const video = this.videoElement.nativeElement;
+    video.muted = true;
+    video.pause();
   }
 }

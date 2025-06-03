@@ -3,12 +3,14 @@ import { VideoSliderComponent } from '../../components/video-slider/video-slider
 import { CarsService } from '../../services/cars.service';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
 import { FilterComponent } from '../../components/filter/filter.component';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { FavoritesService } from '../../services/favorites.service';
+import { CarsEmptyComponent } from "../../components/cars-empty/cars-empty.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  imports: [VideoSliderComponent, FilterComponent, CarCardComponent, NgFor],
+  imports: [VideoSliderComponent, FilterComponent, CarCardComponent, NgFor, NgIf, CarsEmptyComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -17,6 +19,8 @@ export class HomeComponent {
   priceMin: any = 0;
   priceMax: any = 0;
   cars = [];
+  isLoading = true
+  filterQuery = ""
   compilations = [
     {
       imgSrc: './assets/img/pages/home/compilation1.jpg',
@@ -40,7 +44,8 @@ export class HomeComponent {
 
   constructor(
     CarsService: CarsService,
-    private favoriteService: FavoritesService
+    private favoriteService: FavoritesService,
+    private router: Router
   ) {
     this._carService = CarsService;
   }
@@ -58,16 +63,31 @@ export class HomeComponent {
     );
   }
 
-  onFilterChanged(filterValues: any) {
-    this.brand = filterValues.brand;
-    this.priceMin = filterValues.priceRange.min;
-    this.priceMax = filterValues.priceRange.max;
+  onFilterChanged(filterCars: any) {
+    this.cars = filterCars.cars
+    this.filterQuery = filterCars.query
+    console.log(this.filterQuery);
+    
+  }
+
+  goTocatalog() {
+    if (this.filterQuery) {
+      this.router.navigate(['/catalog'], { queryParams: { param: this.filterQuery } });
+    } else {
+      this.router.navigate(['/catalog']);
+    }
+  }
+
+  goToCompilation(type: string) {
+    this.router.navigate(['/compilation', type]);
   }
 
   getCars() {
     this._carService.getCars().subscribe(
       (response: any) => {
+        this.isLoading = true
         this.cars = response;
+        this.isLoading = false
       },
       (error) => {
         console.log(error);

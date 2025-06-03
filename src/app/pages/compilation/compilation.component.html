@@ -1,0 +1,16 @@
+<section class="compilation-header">
+  <h1 class="compilation-title">{{ currentCompilation?.title }}</h1>
+  <p class="compilation-description">
+    {{ currentCompilation?.description }}
+  </p>
+</section>
+
+<div class="cars" *ngIf="!isLoading">
+  <app-car-card
+    *ngFor="let car of cars"
+    [car]="car"
+    [favorites]="allFavorites"
+  />
+</div>
+
+<app-cars-empty *ngIf="isLoading" />

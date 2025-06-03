@@ -1,11 +1,18 @@
-import { Component, Directive, ElementRef, HostListener, ViewChild } from '@angular/core';
+import {
+  Component,
+  Directive,
+  ElementRef,
+  HostListener,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CarsService } from '../../services/cars.service';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat.service';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { ReviewModalComponent } from '../../components/review-modal/review-modal.component';
 
 @Directive({
   selector: 'textarea[autoResize]',
@@ -34,48 +41,69 @@ export class AutoResizeTextareaDirective {
   selector: 'app-car-details',
   standalone: true,
   imports: [
-    NgIf, 
-    NgFor, 
-    MatIconModule, 
-    DatePipe, 
+    NgIf,
+    NgFor,
+    DatePipe,
     FormsModule,
     AutoResizeTextareaDirective,
+    ReviewModalComponent
   ],
   templateUrl: './car-details.component.html',
   styleUrl: './car-details.component.css',
 })
 export class CarDetailsComponent {
-  @ViewChild(AutoResizeTextareaDirective) textareaDirective!: AutoResizeTextareaDirective;
+  @ViewChild(AutoResizeTextareaDirective)
+  textareaDirective!: AutoResizeTextareaDirective;
   constructor(
     private route: ActivatedRoute,
     private carService: CarsService,
     private authService: AuthService,
     private chatService: ChatService,
-    private router: Router
+    private router: Router,
+    private toast: HotToastService
   ) {}
 
   id: any = '';
   car: any = {};
   seller: any = {};
+  sale: any = {};
   currentImageIndex = 0;
   isCurrentUserCar: boolean = false;
-  myId = ""
-  message = "Здравствуйте! ";
+  haveReview = false
+  myId = '';
+  message = 'Здравствуйте! ';
   messageHints = [
-    "Где и когда можно посмотреть? ",
-    "Ещё продаёте? ",
-    "Скажите, торг уместен? ",
-    "Предподавателям скидка есть? ",
-  ]
+    'Где и когда можно посмотреть? ',
+    'Ещё продаёте? ',
+    'Скажите, торг уместен? ',
+    'Предподавателям скидка есть? ',
+  ];
+  wasBuying = false;
+    isReviewModalOpen: boolean = false;
+
+  openModal(): void {
+    this.isReviewModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isReviewModalOpen = false;
+  }
 
   sendMessage() {
-    this.chatService.sendMessageWithOutChatId({ advertisementId: this.car._id, buyerId: this.myId, sellerId: this.car.sellerId, senderId: this.myId, recipientId: this.car.sellerId, content: this.message.trim() })
+    this.chatService.sendMessageWithOutChatId({
+      advertisementId: this.car._id,
+      buyerId: this.myId,
+      sellerId: this.car.sellerId,
+      senderId: this.myId,
+      recipientId: this.car.sellerId,
+      content: this.message.trim(),
+    });
   }
 
   useHint(messageHint: String) {
-    this.message += messageHint
-    this.messageHints = this.messageHints.filter(el => el != messageHint)
-    
+    this.message += messageHint;
+    this.messageHints = this.messageHints.filter((el) => el != messageHint);
+
     setTimeout(() => {
       this.textareaDirective.resize();
     }, 10);
@@ -89,12 +117,16 @@ export class CarDetailsComponent {
         (res: any) => {
           this.car = res.carData;
           this.seller = res.sellerData;
+          this.sale = res.saleInfo
+          this.haveReview = res.haveReview
+          console.log(res);
+          
 
           this.authService.getUserID().subscribe(
             (res: any) => {
               if (res.message === 'Успешно') {
                 this.isCurrentUserCar = res.id === this.car.sellerId;
-                this.myId = res.id
+                this.myId = res.id;
               }
             },
             (err: any) => {
@@ -138,5 +170,20 @@ export class CarDetailsComponent {
         }
       );
     }
+  }
+
+  buyCar() {
+    this.carService.buyCar(this.car._id).subscribe(
+      (res: any) => {
+        this.toast.success(`Поздравляем! Вы купили ${this.car.brand} ${this.car.model} за ${this.formatPrice(this.car.price)} ₽`);
+        this.authService.updateBalance(res.newBalance);
+        this.car.available = false;
+        this.sale = res.saleInfo
+      },
+      (err: any) => {
+        console.error(err);
+        this.toast.error(err.error.message);
+      }
+    );
   }
 }

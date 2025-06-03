@@ -43,6 +43,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    & > div:nth-child(1) {
+      display: flex;
+      width: 55%;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    & > div:nth-child(2) {
+      display: flex;
+      width: 25%;
+      justify-content: space-between;
+      align-items: center;
+    }
   }
 }
 
@@ -102,6 +116,14 @@ nav ul li a.active {
   font-weight: 700;
   font-size: 12px;
   user-select: none;
+}
+
+.balance {
+  max-width: 160px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 .user-ava {

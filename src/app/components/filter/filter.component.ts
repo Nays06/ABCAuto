@@ -1,8 +1,9 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarsService } from '../../services/cars.service';
-import { NgFor } from '@angular/common';
+import { Location, NgFor } from '@angular/common';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-filter',
@@ -12,7 +13,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export class FilterComponent {
   brands: any[] = [];
-  filterValues = {
+  filterValues: any = {
     brand: null,
     priceRange: { min: 0, max: 1000000 },
     driveType: { name: '' },
@@ -37,7 +38,7 @@ export class FilterComponent {
     { name: 'Truck' },
     { name: 'Convertible' },
   ];
-  cars: any = []
+  cars: any = [];
 
   get bodyTypeModel() {
     return this.filterValues?.bodyType?.name || null;
@@ -58,18 +59,18 @@ export class FilterComponent {
   log() {
     this._carService.getCars(this.filterQuery).subscribe(
       (res: any) => {
-        this.cars = res
-        this.filteredCars.emit(this.cars);
+        this.cars = res;
+        this.filteredCars.emit({ cars: this.cars, query: this.filterQuery });
       },
       (err: any) => {
         console.error(err);
       }
-    )
+    );
   }
 
   private _carService: CarsService;
 
-  constructor(CarsService: CarsService) {
+  constructor(CarsService: CarsService, private route: ActivatedRoute, private location: Location) {
     this._carService = CarsService;
   }
 
@@ -102,7 +103,42 @@ export class FilterComponent {
   ngOnInit() {
     this.getBrands();
     this.buildFilterQuery();
+
+    this.route.queryParams.subscribe((params) => {
+      const queryParams = params['param']
+      if (queryParams) {
+        const params = new URLSearchParams(queryParams.substring(1));
+        this.filterValues.brand = params.get('brand') || null
+        this.filterValues.driveType = params.get('driveType') ? { name: params.get('driveType') } : null
+        this.filterValues.bodyType = params.get('bodyType') ? { name: params.get('bodyType') } : null
+
+        const priceParam = params.get('price');
+        if (priceParam && priceParam.includes('-')) {
+          const [min, max] = priceParam.split('-').map(Number);
+          this.filterValues.priceRange = { min, max };
+        }
+
+        this._carService.getCars(queryParams + "&limit=24").subscribe(
+          (res: any) => {
+            this.cars = res;
+            this.filteredCars.emit(this.cars);
+            this.clearQueryParams()
+          },
+          (err: any) => {
+            console.error(err);
+          }
+        );
+      }
+    });
   }
+
+  clearQueryParams() {
+    console.log("careref");
+    
+  const pathWithoutParams = this.location.path().split('?')[0];
+  this.location.replaceState(pathWithoutParams);
+}
+
 
   getBrands() {
     this._carService.getBrands().subscribe(
@@ -123,15 +159,9 @@ export class FilterComponent {
     }
 
     if (
-      (
-        this.filterValues.priceRange.min !== 0 ||
-        this.filterValues.priceRange.max !== 0
-      )
-      &&
-      (
-        this.filterValues.priceRange.min ||
-        this.filterValues.priceRange.max
-      )
+      (this.filterValues.priceRange.min !== 0 ||
+        this.filterValues.priceRange.max !== 0) &&
+      (this.filterValues.priceRange.min || this.filterValues.priceRange.max)
     ) {
       queryParts.push(
         `price=${this.filterValues.priceRange.min}-${this.filterValues.priceRange.max}`

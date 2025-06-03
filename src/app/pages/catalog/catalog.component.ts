@@ -2,18 +2,20 @@ import { Component } from '@angular/core';
 import { FilterComponent } from '../../components/filter/filter.component';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
 import { CarsService } from '../../services/cars.service';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { FavoritesService } from '../../services/favorites.service';
+import { CarsEmptyComponent } from "../../components/cars-empty/cars-empty.component";
 
 @Component({
   selector: 'app-catalog',
-  imports: [FilterComponent, CarCardComponent, NgFor],
+  imports: [FilterComponent, CarCardComponent, NgFor, NgIf, CarsEmptyComponent],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.css',
 })
 export class CatalogComponent {
   cars = []
   allFavorites = [];
+  isLoading = true
 
   private _carService: CarsService;
 
@@ -35,13 +37,17 @@ export class CatalogComponent {
   }
 
   onFilterChanged(filterCars: any) {
-    this.cars = filterCars
+    this.isLoading = true
+    this.cars = filterCars.cars
+    this.isLoading = false
   }
 
   getCars() {
-    this._carService.getCars().subscribe(
+    this._carService.getCars("?limit=24").subscribe(
       (response: any) => {
+        this.isLoading = true
         this.cars = response;
+        this.isLoading = false
       },
       (error) => {
         console.log(error);

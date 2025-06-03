@@ -26,8 +26,7 @@ export class CarCardComponent {
 
   }
 
-  showToast() {
-    this.toast.error(this.car._id);
+  goToCar() {
     this.router.navigate(['/car', this.car._id]);
   }
 

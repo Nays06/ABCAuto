@@ -71,16 +71,6 @@ export class ChatComponent {
             : this.chat.sellerId,
         content: this.message.trim(),
       })
-      // .subscribe(
-      //   (r: any) => {
-      //     console.log('Учпешно!', r);
-      //     this.message = '';
-      //     this.scrollToBottom();
-      //   },
-      //   (e: any) => {
-      //     console.error(e);
-      //   }
-      // );
   }
 
   formateTime(time: any) {

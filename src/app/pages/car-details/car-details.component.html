@@ -6,6 +6,16 @@
         <button class="edit-btn" (click)="goToEdit()">Изменить</button>
         <button class="delete-btn" (click)="deleteCar()">Удалить</button>
       </div>
+
+      <div class="buy-btn" *ngIf="!isCurrentUserCar && car.available" (click)="buyCar()">Купить</div>
+      <div *ngIf="car._id && !car.available && myId !== sale.buyerId" class="dissable-btn">Продано</div>
+      <div *ngIf="car._id && !car.available && myId === sale.buyerId" class="dissable-btn">Куплено</div>
+      <div (click)="openModal()" *ngIf="car._id && !car.available && myId === sale.buyerId && !haveReview" class="review-btn">Оставить отзыв</div>
+      <app-review-modal
+        [isOpen]="isReviewModalOpen"
+        [data]="{ seller, car }"
+        (close)="closeModal()">
+      </app-review-modal>
     </div>
     <div class="car-price">{{ formatPrice(car.price) }} ₽</div>
   </div>
@@ -119,9 +129,9 @@
             <span class="info-value">{{ seller.email }}</span>
           </div>
 
-          <div class="info-item" *ngIf="seller.reviews.length">
+          <div class="info-item" *ngIf="seller.reviews?.length">
             <span class="info-label">Отзывы</span>
-            <span class="info-value">{{ seller.reviews.length }} отзывов</span>
+            <span class="info-value">{{ seller.reviews?.length }} отзывов</span>
           </div>
 
           <div class="info-item">
@@ -133,7 +143,7 @@
         </div>
       </div>
 
-      <div class="info-section" *ngIf="car.sellerId && seller">
+      <div class="info-section" *ngIf="(car.sellerId && seller) && (car.sellerId !== myId)">
         <h2>Спросите у продавца</h2>
 
         <div class="messages">
