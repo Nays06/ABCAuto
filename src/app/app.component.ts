@@ -122,8 +122,9 @@ export class AppComponent implements OnInit, OnDestroy {
         ? message.content.substring(0, 50) + '...'
         : message.content;
 
-    this.toast.info(`${senderName}: ${content}`, {
+    this.toast.show(`${senderName}: ${content}`, {
       duration: 5000,
+      icon: '💬',
       position: 'bottom-right',
       style: {
         border: '1px solid var(--primary-color)',
