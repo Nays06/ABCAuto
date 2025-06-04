@@ -5,6 +5,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { FavoritesService } from './services/favorites.service';
 import { AuthService } from './services/auth.service';
 import { SocketService } from './services/socket.service';
+import { ChatService } from './services/chat.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -19,11 +20,13 @@ export class AppComponent implements OnInit, OnDestroy {
   hideHeaderFooter = false;
   currentUserId = '';
   private destroy$ = new Subject<void>();
+  private joinedChatRooms = new Set<string>();
 
   constructor(
     private favoriteService: FavoritesService,
     private authService: AuthService,
     private socketService: SocketService,
+    private chatService: ChatService,
     private router: Router,
     private toast: HotToastService
   ) {
@@ -63,10 +66,33 @@ export class AppComponent implements OnInit, OnDestroy {
             this.currentUserId = res.id;
             this.socketService.setUserOnline(res.id);
             this.setupMessageNotifications();
+            this.joinChatRooms();
           }
         },
         (err: any) => {
           console.error(err);
+        }
+      );
+  }
+
+  private joinChatRooms(): void {
+    this.chatService
+      .getChats()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          res.forEach((chat: any) => {
+            if (!this.joinedChatRooms.has(chat._id)) {
+              this.socketService.joinRoom(chat._id);
+              this.joinedChatRooms.add(chat._id);
+            }
+          });
+        },
+        (err) => {
+          console.error(
+            'Ошибка загрузки чатов для присоединения к комнатам',
+            err
+          );
         }
       );
   }
@@ -88,7 +114,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private showMessageNotification(message: any) {
-    console.log('ssssssssssssssssssssssssss', message);
+    console.log('Новое сообщение:', message);
 
     const senderName = message.senderName || 'Новое сообщение';
     const content =
@@ -96,17 +122,17 @@ export class AppComponent implements OnInit, OnDestroy {
         ? message.content.substring(0, 50) + '...'
         : message.content;
 
-    this.toast.success(`${senderName}: ${content}`, {
+    this.toast.info(`${senderName}: ${content}`, {
       duration: 5000,
-      position: 'bottom-left',
+      position: 'bottom-right',
       style: {
-        border: '1px solid #4ade80',
+        border: '1px solid var(--primary-color)',
         padding: '12px',
         color: '#1f2937',
         cursor: 'pointer',
       },
       iconTheme: {
-        primary: '#4ade80',
+        primary: 'var(--primary-color)',
         secondary: '#ffffff',
       },
     });
@@ -127,6 +153,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.joinedChatRooms.forEach((chatId) => {
+      this.socketService.leaveRoom(chatId);
+    });
+    this.joinedChatRooms.clear();
     this.destroy$.next();
     this.destroy$.complete();
   }
