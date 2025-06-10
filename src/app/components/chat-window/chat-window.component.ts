@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SocketService } from '../../services/socket.service';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-chat-window',
@@ -13,13 +14,15 @@ import { HotToastService } from '@ngxpert/hot-toast';
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.css',
 })
-export class ChatWindowComponent {
+export class ChatWindowComponent implements OnInit, OnDestroy {
   chatId: any = '';
   chat: any = {};
   chatMessages: any = [];
   message = '';
   hovered: boolean = false;
   currentUserId: string = '';
+  private destroy$ = new Subject<void>();
+
   @ViewChild('messagesContainer')
   private messagesContainer!: ElementRef<HTMLDivElement>;
 
@@ -33,58 +36,80 @@ export class ChatWindowComponent {
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(async (params) => {
-      this.chatId = params.get('id')!;
+    this.route.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(async (params) => {
+        const newChatId = params.get('id')!;
 
-      if (this.chatId) {
-        await this.loadChat(this.chatId);
-        this.markMessagesAsRead();
-        this.socketService.joinRoom(this.chatId);
-      }
-    });
+        if (this.chatId && this.chatId !== newChatId) {
+          this.socketService.leaveRoom(this.chatId);
+        }
 
-    this.authService.getUserID().subscribe((r: any) => {
-      this.currentUserId = r.id;
-    });
+        this.chatId = newChatId;
 
-    this.socketService.onNewMessage().subscribe((msg) => {
-      if (msg.chatId === this.chatId) {
-        this.chatMessages.push(msg);
-        this.scrollToBottom();
-
-        if (msg.senderId !== this.currentUserId) {
+        if (this.chatId) {
+          await this.loadChat(this.chatId);
           this.markMessagesAsRead();
+          this.socketService.joinRoom(this.chatId);
         }
-      }
-    });
+      });
 
-    this.socketService.onMessageRead().subscribe(({ messageId, chatId }) => {
-      if (chatId === this.chatId) {
-        const message = this.chatMessages.find((m: any) => m._id === messageId);
-        if (message) {
-          message.isRead = true;
+    this.authService
+      .getUserID()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((r: any) => {
+        this.currentUserId = r.id;
+      });
+
+    this.socketService
+      .onNewMessage()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((msg) => {
+        if (msg.chatId === this.chatId) {
+          this.chatMessages.push(msg);
+          this.scrollToBottom();
+
+          if (msg.senderId !== this.currentUserId) {
+            this.markMessagesAsRead();
+          }
         }
-      }
-    });
+      });
+
+    this.socketService
+      .onMessageRead()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ messageId, chatId }) => {
+        if (chatId === this.chatId) {
+          const message = this.chatMessages.find(
+            (m: any) => m._id === messageId
+          );
+          if (message) {
+            message.isRead = true;
+          }
+        }
+      });
   }
 
   async loadChat(chatId: string): Promise<void> {
     window.scrollTo(0, 0);
 
-    this.chatService.getChat(chatId).subscribe(
-      (res: any) => {
-        this.chat = res.chatInfo;
-        this.chatMessages = res.chatMessages;
-        console.log(res);
-        this.scrollToBottom(false);
-        this.markMessagesAsRead();
-      },
-      (err: any) => {
-        console.error(err);
-        this.toast.error(err.error.message)
-        this.router.navigate(['/chats']);
-      }
-    );
+    this.chatService
+      .getChat(chatId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          this.chat = res.chatInfo;
+          this.chatMessages = res.chatMessages;
+          console.log(res);
+          this.scrollToBottom(false);
+          this.markMessagesAsRead();
+        },
+        (err: any) => {
+          console.error(err);
+          this.toast.error(err.error.message);
+          this.router.navigate(['/chats']);
+        }
+      );
   }
 
   markMessagesAsRead() {
@@ -95,25 +120,28 @@ export class ChatWindowComponent {
     if (unreadMessages.length > 0) {
       const messageIds = unreadMessages.map((msg: any) => msg._id);
 
-      this.chatService.markMessagesAsRead(this.chatId, messageIds).subscribe(
-        () => {
-          unreadMessages.forEach((msg: any) => (msg.isRead = true));
+      this.chatService
+        .markMessagesAsRead(this.chatId, messageIds)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          () => {
+            unreadMessages.forEach((msg: any) => (msg.isRead = true));
 
-          messageIds.forEach((messageId: string) => {
-            this.socketService.emitMessageRead({
-              chatId: this.chatId,
-              messageId,
-              recipientId:
-                this.currentUserId === this.chat.sellerId
-                  ? this.chat.buyerId
-                  : this.chat.sellerId,
+            messageIds.forEach((messageId: string) => {
+              this.socketService.emitMessageRead({
+                chatId: this.chatId,
+                messageId,
+                recipientId:
+                  this.currentUserId === this.chat.sellerId
+                    ? this.chat.buyerId
+                    : this.chat.sellerId,
+              });
             });
-          });
-        },
-        (err: any) => {
-          console.error('Ошибка при отметке сообщений как прочитанных', err);
-        }
-      );
+          },
+          (err: any) => {
+            console.error('Ошибка при отметке сообщений как прочитанных', err);
+          }
+        );
     }
   }
 
@@ -129,16 +157,19 @@ export class ChatWindowComponent {
         content: this.message.trim(),
       };
 
-      this.chatService.sendMessageWithChatId(messageData).subscribe(
-        (r: any) => {
-          console.log('Успешно!', r);
-          this.message = '';
-          this.scrollToBottom();
-        },
-        (e: any) => {
-          console.error('Ошибка отправки сообщения', e);
-        }
-      );
+      this.chatService
+        .sendMessageWithChatId(messageData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (r: any) => {
+            console.log('Успешно!', r);
+            this.message = '';
+            this.scrollToBottom();
+          },
+          (e: any) => {
+            console.error('Ошибка отправки сообщения', e);
+          }
+        );
     }
   }
 
@@ -155,14 +186,16 @@ export class ChatWindowComponent {
   scrollToBottom(animation: boolean = true) {
     try {
       setTimeout(() => {
-        if (animation) {
-          this.messagesContainer.nativeElement.scrollTo({
-            top: this.messagesContainer.nativeElement.scrollHeight,
-            behavior: 'smooth',
-          });
-        } else {
-          this.messagesContainer.nativeElement.scrollTop =
-            this.messagesContainer.nativeElement.scrollHeight;
+        if (this.messagesContainer?.nativeElement) {
+          if (animation) {
+            this.messagesContainer.nativeElement.scrollTo({
+              top: this.messagesContainer.nativeElement.scrollHeight,
+              behavior: 'smooth',
+            });
+          } else {
+            this.messagesContainer.nativeElement.scrollTop =
+              this.messagesContainer.nativeElement.scrollHeight;
+          }
         }
       }, 10);
     } catch (err) {
@@ -171,6 +204,11 @@ export class ChatWindowComponent {
   }
 
   ngOnDestroy() {
-    this.socketService.disconnect();
+    if (this.chatId) {
+      this.socketService.leaveRoom(this.chatId);
+    }
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
