@@ -18,35 +18,30 @@ export class ChatListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private joinedChatRooms = new Set<string>();
 
-  constructor(
-    private chatService: ChatService,
-    private socketService: SocketService,
-    private router: Router,
-    private authService: AuthService
-  ) {}
-
   ngOnInit(): void {
     this.authService
-      .getUserID()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
-        this.currentUserId = res.id;
-      });
+    .getUserID()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((res: any) => {
+      this.currentUserId = res.id;
+      console.log("this.currentUserId", this.currentUserId);
+      
+      this.chatService
+        .getChats()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (res) => {
+            this.chats = res;
+            console.log(this.chats);
+            this.setupChatsStatus();
+            this.joinChatRooms();
+          },
+          (err) => {
+            console.error('Ошибка загрузки чатов', err);
+          }
+        );
+    });
 
-    this.chatService
-      .getChats()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (res) => {
-          this.chats = res;
-          console.log(this.chats);
-          this.setupChatsStatus();
-          this.joinChatRooms();
-        },
-        (err) => {
-          console.error('Ошибка загрузки чатов', err);
-        }
-      );
 
     this.socketService
       .onMessageRead()
@@ -89,6 +84,14 @@ export class ChatListComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  constructor(
+    private chatService: ChatService,
+    private socketService: SocketService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
 
   private joinChatRooms(): void {
     this.chats.forEach((chat) => {

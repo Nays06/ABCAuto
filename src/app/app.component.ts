@@ -54,6 +54,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.hideHeaderFooter = this.router.url.includes('hack');
       }
     });
+
+    this.authService.logout$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+      this.ngOnDestroy();
+    });
   }
 
   ngOnInit() {

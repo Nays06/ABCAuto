@@ -16,7 +16,7 @@ export class HeaderComponent {
   avatarUrl: any = '';
   favoriteCount = 0;
   isAuthenticated = false;
-  balance: number = 0;  // Теперь balance существует
+  balance: number = 0;
   private userSub!: Subscription;
 
   @ViewChild('dropdown') dropdown!: ElementRef;
@@ -94,6 +94,7 @@ export class HeaderComponent {
         this.favoriteService.setCount(0);
         this.isDropdownOpen = false;
         this.isAuthenticated = false;
+        this.authService.triggerLogout();
       },
       error: (err) => {
         console.error('Ошибка выхода:', err);

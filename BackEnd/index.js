@@ -41,7 +41,7 @@ app.use("/static", express.static("static"));
 
 const start = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/ABCAuto"); //test
+    await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ABCAuto");
     server.listen(PORT, () => {
       console.clear();
       console.log(`Сервер запущен на порту ${PORT}`);

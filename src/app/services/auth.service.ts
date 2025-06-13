@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, Subject, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +10,8 @@ export class AuthService {
   currentAvatar$ = this.avatarSubject.asObservable();
   private balance = new BehaviorSubject<number>(0);
   public balance$ = this.balance.asObservable();
+  private logoutSubject = new Subject<void>();
+  logout$ = this.logoutSubject.asObservable();
 
   updateBalance(balance: number) {
     this.balance.next(balance);
@@ -77,5 +79,9 @@ export class AuthService {
 
   setBalance(balance: number) {
     return this.http.post(`${this.apiURL}/balance`, { balance });
+  }
+
+  triggerLogout() {
+    this.logoutSubject.next();
   }
 }
