@@ -23,16 +23,13 @@ export class ChatListComponent implements OnInit, OnDestroy {
     .getUserID()
     .pipe(takeUntil(this.destroy$))
     .subscribe((res: any) => {
-      this.currentUserId = res.id;
-      console.log("this.currentUserId", this.currentUserId);
-      
+      this.currentUserId = res.id;      
       this.chatService
         .getChats()
         .pipe(takeUntil(this.destroy$))
         .subscribe(
           (res) => {
             this.chats = res;
-            console.log(this.chats);
             this.setupChatsStatus();
             this.joinChatRooms();
           },
@@ -115,7 +112,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (isOnline) => {
             chat.isOnline = isOnline;
-            console.log(`Статус пользователя ${otherUserId}:`, isOnline);
+            // console.log(`Статус пользователя ${otherUserId}:`, isOnline);
           },
           error: (err) => {
             console.error(`Ошибка получения статуса для ${otherUserId}:`, err);

@@ -78,7 +78,7 @@
           <img src="./assets/img/components/header/message.svg" alt="message">
           <!-- <div class="counter">12</div> -->
         </div>
-        <div class="header-search">
+        <div class="header-search" (click)="showModal = true">
           <img src="./assets/img/components/header/search.svg" alt="search" />
         </div>
       </div>
@@ -103,4 +103,12 @@
       </div>
     </div>
   </div>
+
+  <!-- <button>Поиск автомобиля</button> -->
+
+<app-search-modal 
+  *ngIf="showModal"
+  (closed)="showModal = false"
+  (searchSubmitted)="onSearch($event)">
+</app-search-modal>
 </header>

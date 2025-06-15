@@ -122,7 +122,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private showMessageNotification(message: any) {
     console.log('Новое сообщение:', message);
 
-    const senderName = message.senderName || 'Новое сообщение';
+    const senderName = `${message.senderName} ${message.senderSurName}` || 'Новое сообщение';
     const content =
       message.content.length > 50
         ? message.content.substring(0, 50) + '...'

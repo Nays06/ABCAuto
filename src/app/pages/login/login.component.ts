@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 import { SocketService } from '../../services/socket.service';
 import { ChatService } from '../../services/chat.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-login',
@@ -55,13 +56,18 @@ export class LoginComponent {
   authForm: FormGroup;
   error: string = '';
   logError: string = '';
+  currentUserId: any = '';
+  private joinedChatRooms = new Set<string>();
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private route: Router,
     private socketService: SocketService,
-    private favoriteService: FavoritesService
+    private favoriteService: FavoritesService,
+    private router: Router,
+    private chatService: ChatService,
+    private toast: HotToastService
   ) {
     this.authForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -79,7 +85,12 @@ export class LoginComponent {
           this.authService.getUserID().subscribe(
             (res: any) => {
               if (res.message === 'Успешно') {
-                this.socketService.setUserOnline(res.id);
+                this.currentUserId = res.id;
+                this.socketService.setUserOnline(this.currentUserId);
+                this.socketService.initSocket();
+                this.setupMessageNotifications();
+                this.joinChatRooms();
+                
                 this.favoriteService.getFavorites().subscribe(
                   (res: any) => {
                     this.favoriteService.setCount(res.favorites.length);
@@ -106,6 +117,79 @@ export class LoginComponent {
       this.authForm.markAllAsTouched();
     }
   }
+
+  private setupMessageNotifications() {
+    this.socketService.newMessageNotification$.subscribe((message) => {
+      if (message.senderId !== this.currentUserId) {
+        const isInChatWindow = this.router.url.includes(
+          `/chats/${message.chatId}`
+        );
+
+        if (!isInChatWindow) {
+          this.showMessageNotification(message);
+        }
+      }
+    });
+  }
+
+  private showMessageNotification(message: any) {
+    console.log('Новое сообщение:', message);
+
+    const senderName = message.senderName || 'Новое сообщение';
+    const content =
+      message.content.length > 50
+        ? message.content.substring(0, 50) + '...'
+        : message.content;
+
+    this.toast.show(`${senderName}: ${content}`, {
+      duration: 5000,
+      icon: '💬',
+      position: 'bottom-right',
+      style: {
+        border: '1px solid var(--primary-color)',
+        padding: '12px',
+        color: '#1f2937',
+        cursor: 'pointer',
+      },
+      iconTheme: {
+        primary: 'var(--primary-color)',
+        secondary: '#ffffff',
+      },
+    });
+
+    this.playNotificationSound();
+  }
+
+  private playNotificationSound() {
+    try {
+      const audio = new Audio('./assets/sounds/notification.mp3');
+      audio.volume = 0.3;
+      audio.play().catch((err) => {
+        console.log('Не удалось воспроизвести звук уведомления:', err);
+      });
+    } catch (err) {
+      console.log('Звук уведомления недоступен:', err);
+    }
+  }
+
+private joinChatRooms() {
+  this.chatService.getChats().subscribe(
+    (res: any) => {
+      res.forEach((chat: any) => {
+        if (!this.joinedChatRooms.has(chat._id)) {
+          this.socketService.joinRoom(chat._id);
+          this.joinedChatRooms.add(chat._id);
+        }
+      });
+    },
+    (err) => {
+      console.error(
+        'Ошибка загрузки чатов для присоединения к комнатам',
+        err
+      );
+    }
+  );
+}
 
   ngOnInit() {
     this.generateRandomCars();

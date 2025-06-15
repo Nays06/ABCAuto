@@ -18,6 +18,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   chatId: any = '';
   chat: any = {};
   chatMessages: any = [];
+  sellerInfo: any = {}
+  buyerInfo: any = {}
   message = '';
   hovered: boolean = false;
   currentUserId: string = '';
@@ -100,6 +102,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
         (res: any) => {
           this.chat = res.chatInfo;
           this.chatMessages = res.chatMessages;
+          this.sellerInfo = res.sellerInfo
+          this.buyerInfo = res.buyerInfo
           console.log(res);
           this.scrollToBottom(false);
           this.markMessagesAsRead();
@@ -145,7 +149,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendMessage() {
+  sendMessage() {    
     if (this.message.trim()) {
       const messageData = {
         chatId: this.chat._id,
@@ -154,8 +158,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
           this.currentUserId === this.chat.sellerId
             ? this.chat.buyerId
             : this.chat.sellerId,
+        senderName: this.currentUserId === this.sellerInfo._id ? this.sellerInfo.name : this.buyerInfo.name,
+        senderSurName: this.currentUserId === this.sellerInfo._id ? this.sellerInfo.surname : this.buyerInfo.surname,
         content: this.message.trim(),
       };
+      console.log("messageData", messageData);
+      
 
       this.chatService
         .sendMessageWithChatId(messageData)

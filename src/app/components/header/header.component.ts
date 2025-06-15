@@ -3,11 +3,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { NgIf } from '@angular/common';
-import { map, Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { SearchModalComponent } from '../search-modal/search-modal.component';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, NgIf],
+  imports: [RouterLink, RouterLinkActive, NgIf, SearchModalComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -18,6 +19,7 @@ export class HeaderComponent {
   isAuthenticated = false;
   balance: number = 0;
   private userSub!: Subscription;
+  showModal = false
 
   @ViewChild('dropdown') dropdown!: ElementRef;
   @ViewChild('avatar') avatar!: ElementRef;
@@ -124,4 +126,12 @@ export class HeaderComponent {
   formatBalance(price: number): string {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
+
+  onSearch(searchParams: any): void {
+    if (searchParams) {
+      this.router.navigate(['/catalog'], { queryParams: { param: `?${searchParams}` } });
+    } else {
+      this.router.navigate(['/catalog']);
+    }
+}
 }

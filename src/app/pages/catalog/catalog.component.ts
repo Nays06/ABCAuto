@@ -5,6 +5,7 @@ import { CarsService } from '../../services/cars.service';
 import { NgFor, NgIf } from '@angular/common';
 import { FavoritesService } from '../../services/favorites.service';
 import { CarsEmptyComponent } from "../../components/cars-empty/cars-empty.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-catalog',
@@ -19,13 +20,17 @@ export class CatalogComponent {
 
   private _carService: CarsService;
 
-  constructor(CarsService: CarsService, private favoriteService: FavoritesService) {
+  constructor(CarsService: CarsService, private favoriteService: FavoritesService, private route: ActivatedRoute) {
     this._carService = CarsService;
   }
   
   ngOnInit() {
-    this.getCars();
-
+    this.route.queryParams.subscribe((params) => {
+      const queryParams = params['param']
+      if (!queryParams) {
+        this.getCars();
+      }
+    });
     this.favoriteService.getFavorites().subscribe(
       (res: any) => {
         this.allFavorites = res.favorites;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, share, takeUntil } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -18,17 +18,28 @@ export class SocketService {
   public userStatus$ = this.userStatusSubject.asObservable();
 
   private newMessageNotificationSubject = new Subject<any>();
-  public newMessageNotification$ =
-    this.newMessageNotificationSubject.asObservable();
+  public newMessageNotification$ = this.newMessageNotificationSubject
+    .asObservable()
+    .pipe(share());
 
   private joinedRooms = new Set<string>();
   private isConnected = false;
+
+  private isNotificationSubscribed = false;
+
+  getNewMessageNotifications() {
+    if (!this.isNotificationSubscribed) {
+      this.isNotificationSubscribed = true;
+      return this.newMessageNotification$;
+    }
+    return this.newMessageNotification$;
+  }
 
   constructor(private authService: AuthService) {
     this.initSocket();
   }
 
-  private initSocket() {
+  public initSocket() {
     this.socket = io(this.SERVER_URL, {
       transports: ['websocket'],
       autoConnect: true,
@@ -65,10 +76,6 @@ export class SocketService {
       currentStatus[data.userId] = data.isOnline;
       this.userStatusSubject.next(currentStatus);
     });
-
-    this.socket.on('newMessage', (message) => {
-      this.newMessageNotificationSubject.next(message);
-    });
   }
 
   private rejoinRooms() {
@@ -92,7 +99,7 @@ export class SocketService {
     this.joinedRooms.add(chatId);
     if (this.isConnected) {
       this.socket.emit('joinRoom', chatId);
-      console.log(`Присоединились к комнате: ${chatId}`);
+      // console.log(`Присоединились к комнате: ${chatId}`);
     } else {
       this.socket.once('connect', () => {
         this.socket.emit('joinRoom', chatId);
@@ -104,7 +111,7 @@ export class SocketService {
     this.joinedRooms.delete(chatId);
     if (this.isConnected) {
       this.socket.emit('leaveRoom', chatId);
-      console.log(`Покинули комнату: ${chatId}`);
+      // console.log(`Покинули комнату: ${chatId}`);
     }
   }
 
@@ -130,6 +137,7 @@ export class SocketService {
       const handler = (message: any) => {
         console.log('Получено новое сообщение:', message);
         observer.next(message);
+        this.newMessageNotificationSubject.next(message);
       };
       this.socket.on('newMessage', handler);
 

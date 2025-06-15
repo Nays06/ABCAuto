@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SocketService } from './socket.service';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ export class ChatService {
     private http: HttpClient,
     private router: Router,
     private socketService: SocketService,
-    private toast: HotToastService
+    private toast: HotToastService,
+    private authService: AuthService
   ) {
     this.loadChats();
     this.subscribeToNewMessages();
@@ -56,6 +58,44 @@ export class ChatService {
           (res: any) => {
             const thisChat = res.find((chat: any) => chat._id === newChat._id);
             console.log('thisChat', thisChat);
+
+            this.authService.getUserID().subscribe(
+              (res: any) => {
+                if(thisChat?.lastMessage?.senderId?._id !== res?.id) {
+                  const senderName = thisChat?.lastMessage?.senderId?.name + thisChat?.lastMessage?.senderId?.surname || 'Новое сообщение';
+                  const content =
+                    thisChat.lastMessage.content.length > 50
+                      ? thisChat.lastMessage.content.substring(0, 50) + '...'
+                      : thisChat.lastMessage.content;
+
+                  this.toast.show(`${senderName}: ${content}`, {
+                    duration: 5000,
+                    icon: '💬',
+                    position: 'bottom-right',
+                    style: {
+                      border: '1px solid var(--primary-color)',
+                      padding: '12px',
+                      color: '#1f2937',
+                      cursor: 'pointer',
+                    },
+                    iconTheme: {
+                      primary: 'var(--primary-color)',
+                      secondary: '#ffffff',
+                    },
+                  });
+
+                  try {
+                    const audio = new Audio('./assets/sounds/notification.mp3');
+                    audio.volume = 0.3;
+                    audio.play().catch((err) => {
+                      console.log('Не удалось воспроизвести звук уведомления:', err);
+                    });
+                  } catch (err) {
+                    console.log('Звук уведомления недоступен:', err);
+                  }
+                }
+              }
+            )
 
             currentChats.unshift(thisChat);
             this.chatsSubject.next(currentChats);
@@ -155,12 +195,7 @@ export class ChatService {
   }
 
   sendMessageWithChatId(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/messages`, {
-      chatId: data.chatId,
-      senderId: data.senderId,
-      recipientId: data.recipientId,
-      content: data.content,
-    });
+    return this.http.post(`${this.apiUrl}/messages`, data);
   }
 
   getChat(chatId: string) {

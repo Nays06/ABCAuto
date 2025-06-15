@@ -22,7 +22,9 @@ export class AuthService {
   apiURL = 'http://localhost:5555/auth';
 
   registerUser(formData: FormData) {
-    return this.http.post(`${this.apiURL}/registration`, formData);
+    return this.http.post(`${this.apiURL}/registration`, formData, {
+      withCredentials: true,
+    });
   }
 
   loginUser(userData: Object) {

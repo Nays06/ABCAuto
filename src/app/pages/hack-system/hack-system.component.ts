@@ -81,17 +81,21 @@ export class HackSystemComponent {
     }
   }
 
-  constructor (private authService: AuthService, private router: Router, private location: Location) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private location: Location
+  ) {}
 
   ngOnInit() {
     this.authService.getBalance().subscribe(
       (res: any) => {
-        this.balance = res
+        this.balance = res;
       },
       (err: any) => {
         console.error(err);
       }
-    )
+    );
   }
 
   private handleTabCompletion() {
@@ -143,6 +147,13 @@ export class HackSystemComponent {
     this.isFullscreen = !this.isFullscreen;
   }
 
+  exit() {
+    if (this.isFullscreen) {
+      this.toggleFullscreen();
+    }
+    this.location.back();
+  }
+
   executeCommand(event: Event) {
     const input = event.target as HTMLInputElement;
     const command = input.value.trim();
@@ -173,11 +184,11 @@ export class HackSystemComponent {
           true
         );
       }
-    } else if(command === "leave") {
-      if(this.isFullscreen) {
-        this.toggleFullscreen()
+    } else if (command === 'leave') {
+      if (this.isFullscreen) {
+        this.toggleFullscreen();
       }
-      this.location.back()
+      this.location.back();
     } else if (command in this.commands) {
       this.addToTerminal(this.commands[command as keyof typeof this.commands]);
     } else {
@@ -209,38 +220,42 @@ export class HackSystemComponent {
     }
   }
 
-private hackTransfer(amount: number) {
-  this.authService.setBalance(this.balance + amount).subscribe(
-    (res: any) => {
-      console.log(res);
-      this.authService.updateBalance(this.balance + amount);
-      this.processHackingSteps(amount);
-    },
-    (err: any) => {
-      console.log(err);
-      this.addToTerminal(err.error.message, true);
-    }
-  );
-}
+  private hackTransfer(amount: number) {
+    this.authService.setBalance(this.balance + amount).subscribe(
+      (res: any) => {
+        console.log(res);
+        this.authService.updateBalance(this.balance + amount);
+        this.processHackingSteps(amount);
+      },
+      (err: any) => {
+        console.log(err);
+        this.addToTerminal(err.error.message, true);
+      }
+    );
+  }
 
-private processHackingSteps(amount: number) {
-  this.addToTerminal(`'Mamkin Hacker' Hacking system for amount $${amount.toLocaleString()}...`);
+  private processHackingSteps(amount: number) {
+    this.addToTerminal(
+      `'Mamkin Hacker' Hacking system for amount $${amount.toLocaleString()}...`
+    );
 
-  setTimeout(() => {
-    this.addToTerminal('Bypassing security...');
-  }, 800);
+    setTimeout(() => {
+      this.addToTerminal('Bypassing security...');
+    }, 800);
 
-  setTimeout(() => {
-    this.addToTerminal('Replacing data...');
-  }, 1600);
+    setTimeout(() => {
+      this.addToTerminal('Replacing data...');
+    }, 1600);
 
-  setTimeout(() => {
-    this.balance += amount;
-    this.addToTerminal(`Success! Balance increased by $${amount.toLocaleString()}`);
-    this.addToTerminal(`Current balance: $${this.balance.toLocaleString()}`);
-    this.playSuccessSound();
-  }, 2500);
-}
+    setTimeout(() => {
+      this.balance += amount;
+      this.addToTerminal(
+        `Success! Balance increased by $${amount.toLocaleString()}`
+      );
+      this.addToTerminal(`Current balance: $${this.balance.toLocaleString()}`);
+      this.playSuccessSound();
+    }, 2500);
+  }
 
   private addToTerminal(text: string, isError: boolean = false) {
     this.terminalOutput.push({ text, isError });

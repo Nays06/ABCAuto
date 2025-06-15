@@ -67,7 +67,6 @@ export class HomeComponent {
     this.cars = filterCars.cars
     this.filterQuery = filterCars.query
     console.log(this.filterQuery);
-    
   }
 
   goTocatalog() {

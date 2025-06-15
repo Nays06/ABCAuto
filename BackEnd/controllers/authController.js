@@ -6,6 +6,7 @@ const fs = require("fs");
 const Car = require("../models/Car");
 require("dotenv").config();
 const secret = process.env.JWT_SECRET;
+const mailer = require("../nodemailer")
 
 const generateAccessToken = (id) => {
   const payload = {
@@ -54,12 +55,33 @@ class authController {
         user.avatar = "static/avatar/default-avatar.jpeg";
       }
 
-      await user.save();
+      
+      const message = {
+        to: email,
+        subject: "Подтверждение электронной почты",
+        text: `Поздравляем вы успешно зарегистрировались на нашем сайте
+        данные вашей учетной записи
+        login: ${email} , 
+        password: ${password}`,
+      };
+      mailer(message)
 
       const token = generateAccessToken(user._id.toString());
+      const refreshToken = generateRefreshToken(user._id);
 
+      user.refreshToken = refreshToken;
+      await user.save();
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
+      });
+      
       return res
-        .status(200)
+      .status(200)
         .json({ message: "Регистрация прошла успешно", token });
     } catch (e) {
       console.log(e);

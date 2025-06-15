@@ -19,16 +19,16 @@ const upload = multer({
             file.mimetype === "image/jpg" ||
             file.mimetype === "image/jpeg"
         ) {
-            callback(null, true);// РАЗРЕШАЕМ ЗАГРУЗКУ ФАЙЛА
+            callback(null, true);
         } else {
             console.log("Допускаются  только файлы формата JPG/JPEG/PNG");
 
-            callback(new Error("Ошибка загрузки"), false);// БЛОКИРУЕМ ЗАГРУЗКУ ФАЙЛА
+            callback(new Error("Ошибка загрузки"), false);
         }
 
     },
     limits: {
-        fileSize: 1024 * 1024 * 20 // Макс размеер  20 мб
+        fileSize: 1024 * 1024 * 20
     }
 });
 

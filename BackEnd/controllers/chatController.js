@@ -2,7 +2,7 @@ const Chat = require("../models/Chat");
 const Message = require("../models/Message");
 const Car = require("../models/Car");
 const User = require("../models/User");
-
+const mailer = require("../nodemailer")
 const { getIO } = require("../socket");
 
 class chatController {
@@ -23,10 +23,26 @@ class chatController {
           sellerId,
         });
         await chat.save();
-
+        
         const io = getIO();
         io.to(buyerId).emit("newChat", chat);
         io.to(sellerId).emit("newChat", chat);
+
+        setTimeout(async () => {
+          const seller = await User.findById(sellerId)
+          const buyer = await User.findById(buyerId)
+          const car = await Car.findById(advertisementId)
+          const firstMessage = await Message.findOne({ chatId: chat._id })
+
+          console.log(`У вас новое сообщение по поводу объявления о продаже автомобиля ${car.brand} ${car.model} от ${buyer.name} ${buyer.surname}: ${firstMessage.content}`)
+
+          const message = {
+            to: seller.email,
+            subject: "Новое сообщение",
+            text: `У вас новое сообщение по поводу объявления о продаже автомобиля ${car.brand} ${car.model} от ${buyer.name} ${buyer.surname}: ${firstMessage.content}`,
+          };
+          mailer(message);
+        }, 1000);
       }
 
       res.status(200).json(chat);
@@ -56,7 +72,10 @@ class chatController {
       await message.save();
 
       const io = getIO();
-      io.to(chatId).emit("newMessage", message);
+      const messageData = message.toObject();
+      messageData.senderName = req.body.senderName;
+      messageData.senderSurName = req.body.senderSurName;
+      io.to(chatId).emit("newMessage", messageData);
 
       await Chat.findByIdAndUpdate(chatId, {
         updatedAt: new Date(),
@@ -126,9 +145,13 @@ class chatController {
         "name surname avatar"
       );
 
+      const buyerInfo = await User.findById(chatInfo.buyerId).select(
+        "name surname avatar"
+      );
+
       res
         .status(200)
-        .json({ chatInfo, chatMessages, advertisementInfo, sellerInfo });
+        .json({ chatInfo, chatMessages, advertisementInfo, sellerInfo, buyerInfo });
     } catch (e) {
       console.log(e);
       res.status(500).json({ message: "Ошибка вывода одного чата" });

@@ -50,8 +50,6 @@ module.exports = {
       });
 
       socket.on("messageRead", async ({ chatId, messageId, recipientId }) => {
-        console.log("read", messageId);
-
         await Chat.findByIdAndUpdate(chatId, {
           $set: {
             "lastMessage.isRead": true,

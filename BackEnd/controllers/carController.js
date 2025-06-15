@@ -27,7 +27,7 @@ class CarController {
       const limit = Number(req.query.limit) || 12;
       const page = Number(req.query.page) || 1;
       const skip = (page - 1) * limit;
-      const { brand, driveType, bodyType, price, compilation } = req.query;
+      const { brand, model, driveType, bodyType, fuelType, price, yearFrom, yearTo, compilation } = req.query;
 
       const filter = {};
 
@@ -38,13 +38,21 @@ class CarController {
       }
 
       if (brand) filter.brand = brand;
+      if (model) filter.model = model;
       if (driveType) filter.driveType = driveType;
+      if (fuelType) filter.fuelType = fuelType;
 
       if (price) {
         const [min, max] = price.split("-").map(Number);
         filter.price = {};
         if (!isNaN(min)) filter.price.$gte = min;
         if (!isNaN(max)) filter.price.$lte = max;
+      }
+
+      if (yearFrom || yearTo) {
+        filter.year = {};
+        if (yearFrom && !isNaN(Number(yearFrom))) filter.year.$gte = Number(yearFrom);
+        if (yearTo && !isNaN(Number(yearTo))) filter.year.$lte = Number(yearTo);
       }
 
       const cars = await Car.aggregate([
@@ -128,8 +136,6 @@ class CarController {
       }
 
       const haveReview = await Review.findOne({ car: car._id })
-
-      console.log(id, car.sellerId, car._id)
 
       res.status(200).json({
         message: "Успешно!",

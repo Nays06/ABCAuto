@@ -121,7 +121,7 @@ export class FilterComponent {
         this._carService.getCars(queryParams + "&limit=24").subscribe(
           (res: any) => {
             this.cars = res;
-            this.filteredCars.emit(this.cars);
+            this.filteredCars.emit({ cars: this.cars, query: queryParams });
             this.clearQueryParams()
           },
           (err: any) => {
