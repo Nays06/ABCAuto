@@ -1,5 +1,5 @@
 <div class="chat-container">
-  <div class="chat-header">Чат #{{ chatId }}</div>
+  <div class="chat-header">{{ chat?.advertisementId?.brand }} {{ chat?.advertisementId?.model }}</div>
 
   <div class="messages-container" #messagesContainer>
     <div *ngFor="let message of chatMessages" class="message-wrapper">

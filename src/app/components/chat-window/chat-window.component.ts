@@ -101,6 +101,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe(
         (res: any) => {
           this.chat = res.chatInfo;
+          console.log(this.chat);
+          
           this.chatMessages = res.chatMessages;
           this.sellerInfo = res.sellerInfo
           this.buyerInfo = res.buyerInfo

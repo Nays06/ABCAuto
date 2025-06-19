@@ -125,7 +125,8 @@ class chatController {
           .json({ message: "Чата с таким ID не существует!" });
       }
 
-      const chatInfo = await Chat.findById(chatId);
+      const chatInfo = await Chat.findById(chatId)
+      .populate("advertisementId", "images brand model price")
 
       if (!chatInfo) {
         return res
