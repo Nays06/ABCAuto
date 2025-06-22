@@ -10,6 +10,7 @@ const carRoute = require("./routes/carRoute");
 const favoriteRoute = require("./routes/favoriteRoute");
 const chatRoute = require("./routes/chatRoute");
 const reviewRoute = require("./routes/reviewRoute");
+const postRoute = require("./routes/postRoute");
 
 require("dotenv").config();
 
@@ -36,6 +37,7 @@ app.use("/cars", carRoute);
 app.use("/favorites", favoriteRoute);
 app.use("/chat", chatRoute);
 app.use("/review", reviewRoute);
+app.use("/post", postRoute);
 app.use("/uploads", express.static("uploads"));
 app.use("/static", express.static("static"));
 

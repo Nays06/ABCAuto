@@ -82,6 +82,11 @@ export class LoginComponent {
         next: (res: any) => {
           localStorage.setItem('token', res.token);
           this.authService.loadUserAvatar();
+          this.authService
+                .getBalance()
+                .subscribe((res: any) => {
+                  this.authService.updateBalance(res);
+                });
           this.authService.getUserID().subscribe(
             (res: any) => {
               if (res.message === 'Успешно') {

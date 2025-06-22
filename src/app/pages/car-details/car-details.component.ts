@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ReviewModalComponent } from '../../components/review-modal/review-modal.component';
+import { Subscription } from 'rxjs';
+import { SocketService } from '../../services/socket.service';
 
 @Directive({
   selector: 'textarea[autoResize]',
@@ -46,7 +48,7 @@ export class AutoResizeTextareaDirective {
     DatePipe,
     FormsModule,
     AutoResizeTextareaDirective,
-    ReviewModalComponent
+    ReviewModalComponent,
   ],
   templateUrl: './car-details.component.html',
   styleUrl: './car-details.component.css',
@@ -60,8 +62,13 @@ export class CarDetailsComponent {
     private authService: AuthService,
     private chatService: ChatService,
     private router: Router,
-    private toast: HotToastService
-  ) {}
+    private toast: HotToastService,
+    private socketService: SocketService
+  ) {
+    this.socketService.requestAllUserStatuses();
+  }
+
+  private statusSubscription!: Subscription;
 
   id: any = '';
   car: any = {};
@@ -69,7 +76,8 @@ export class CarDetailsComponent {
   sale: any = {};
   currentImageIndex = 0;
   isCurrentUserCar: boolean = false;
-  haveReview = false
+  isSellerOnline: boolean = false;
+  haveReview = false;
   myId = '';
   message = 'Здравствуйте! ';
   messageHints = [
@@ -79,7 +87,7 @@ export class CarDetailsComponent {
     'Предподавателям скидка есть? ',
   ];
   wasBuying = false;
-    isReviewModalOpen: boolean = false;
+  isReviewModalOpen: boolean = false;
 
   openModal(): void {
     this.isReviewModalOpen = true;
@@ -117,10 +125,23 @@ export class CarDetailsComponent {
         (res: any) => {
           this.car = res.carData;
           this.seller = res.sellerData;
-          this.sale = res.saleInfo
-          this.haveReview = res.haveReview
+          this.sale = res.saleInfo;
+          this.haveReview = res.haveReview;
           console.log(res);
-          
+
+          this.statusSubscription = this.socketService
+            .getUserStatus(this.seller._id)
+            .subscribe({
+              next: (isOnline) => {
+                console.log('Статус пользователя:', isOnline, this.seller._id);
+                this.isSellerOnline = isOnline;
+              },
+              error: (err) => {
+                console.error('Ошибка получения статуса:', err);
+              },
+            });
+
+          this.socketService.requestUserStatus(this.seller._id);
 
           this.authService.getUserID().subscribe(
             (res: any) => {
@@ -153,6 +174,10 @@ export class CarDetailsComponent {
     this.router.navigate(['/car/edit', this.car._id]);
   }
 
+  goToProfile(id: string) {
+    this.router.navigate(['/profile', id]);
+  }
+
   deleteCar() {
     const needToDeleteCar = confirm(
       'Вы действительно хотите удалить этот автомобиль?'
@@ -175,15 +200,23 @@ export class CarDetailsComponent {
   buyCar() {
     this.carService.buyCar(this.car._id).subscribe(
       (res: any) => {
-        this.toast.success(`Поздравляем! Вы купили ${this.car.brand} ${this.car.model} за ${this.formatPrice(this.car.price)} ₽`);
+        this.toast.success(
+          `Поздравляем! Вы купили ${this.car.brand} ${
+            this.car.model
+          } за ${this.formatPrice(this.car.price)} ₽`
+        );
         this.authService.updateBalance(res.newBalance);
         this.car.available = false;
-        this.sale = res.saleInfo
+        this.sale = res.saleInfo;
       },
       (err: any) => {
         console.error(err);
         this.toast.error(err.error.message);
       }
     );
+  }
+
+  ngOnDestroy() {
+    this.statusSubscription.unsubscribe();
   }
 }

@@ -11,12 +11,93 @@
 }
 
 .chat-header {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
   color: white;
-  padding: 15px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 10;
+}
+
+.car-brand-model {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+}
+
+.car-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.car-title h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.car-year-price {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.car-year-price .year {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.car-year-price .price {
   font-weight: bold;
-  text-align: center;
-  font-size: 1.2em;
+  color: #f1c40f;
+}
+
+.interlocutor-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 15px;
+  border-radius: 50px;
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.user-online {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 9px;
+  left: 40px;
+  background-color: #02d15c;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .messages-container {

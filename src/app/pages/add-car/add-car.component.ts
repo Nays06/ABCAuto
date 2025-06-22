@@ -169,6 +169,7 @@ export class AddCarComponent implements OnInit {
       bodyType: [null],
       color: [null, Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
+      description: ['', Validators.required],
       images: [
         [],
         [

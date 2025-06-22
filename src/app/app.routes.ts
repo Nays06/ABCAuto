@@ -14,6 +14,7 @@ import { ChatWindowComponent } from './components/chat-window/chat-window.compon
 import { EmptyChatComponent } from './components/empty-chat/empty-chat.component';
 import { CompilationComponent } from './pages/compilation/compilation.component';
 import { HackSystemComponent } from './pages/hack-system/hack-system.component';
+import { AdminPanelComponent } from './pages/admin-panel/admin-panel.component';
 
 export const routes: Routes = [
     { path: "", component: HomeComponent },
@@ -28,5 +29,6 @@ export const routes: Routes = [
     { path: "car/edit/:id", component: EditCarComponent, canActivate: [AuthGuard] },
     { path: 'chats', component: ChatsComponent, children: [{ path: '', component: EmptyChatComponent }, { path: ':id', component: ChatWindowComponent }], canActivate: [AuthGuard] },
     { path: "favorites", component: FavoritesComponent, canActivate: [AuthGuard] },
-    { path: 'hack', component: HackSystemComponent, data: { hideHeaderFooter: true }, canActivate: [AuthGuard] }
+    { path: 'hack', component: HackSystemComponent, data: { hideHeaderFooter: true }, canActivate: [AuthGuard] },
+    { path: 'admin', component: AdminPanelComponent }
 ];

@@ -15,6 +15,7 @@ const Car = new Schema({
     fuelType: { type: String, required: true },
     color: { type: String, required: true },
     price: { type: Number, required: true },
+    description: { type: String, required: true },
     images: { type: Array, required: true },
     sellerId: { type: String, required: true },
     available: { type: Boolean, default: true },

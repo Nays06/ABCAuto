@@ -48,7 +48,7 @@ export class CatalogComponent {
   }
 
   getCars() {
-    this._carService.getCars("?limit=24").subscribe(
+    this._carService.getCars("?limit=24&available=true").subscribe(
       (response: any) => {
         this.isLoading = true
         this.cars = response;

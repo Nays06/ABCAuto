@@ -28,7 +28,7 @@
   </div>
 </div>
 
-<div class="section">
+<!-- <div class="section">
   <div class="section-title">Отзывы</div>
 
   <div class="section-cont">
@@ -42,18 +42,18 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="section">
   <div class="section-title">Блог</div>
 
   <div class="section-cont">
-    <div class="blog" *ngFor="let compilation of compilations">
+    <div class="blog" *ngFor="let post of posts">
       <div class="blog-img">
-        <img src="./assets/img/pages/home/compilation1.jpg" alt="">
+        <img [src]="`http://localhost:5555/${post.img}`" [alt]="post.title">
       </div>
-      <div class="blog-date">25 октября</div>
-      <div class="blog-title">Тест Skoda Karoq Scout - городской карлик или настоящий скаут</div>
+      <div class="blog-date">{{ formatDate(post.createdAt) }}</div>
+      <div class="blog-title">{{ post.title }}</div>
     </div>
   </div>
 </div>

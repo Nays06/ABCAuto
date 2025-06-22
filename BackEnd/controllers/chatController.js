@@ -126,7 +126,7 @@ class chatController {
       }
 
       const chatInfo = await Chat.findById(chatId)
-      .populate("advertisementId", "images brand model price")
+      .populate("advertisementId", "images brand model price year")
 
       if (!chatInfo) {
         return res
@@ -138,9 +138,9 @@ class chatController {
         createdAt: 1,
       });
 
-      const advertisementInfo = await Car.findById(
-        chatInfo.advertisementId
-      ).select("make model year price images");
+      // const advertisementInfo = await Car.findById(
+      //   chatInfo.advertisementId
+      // ).select("make model year price images");
 
       const sellerInfo = await User.findById(chatInfo.sellerId).select(
         "name surname avatar"
@@ -152,7 +152,7 @@ class chatController {
 
       res
         .status(200)
-        .json({ chatInfo, chatMessages, advertisementInfo, sellerInfo, buyerInfo });
+        .json({ chatInfo, chatMessages, sellerInfo, buyerInfo });
     } catch (e) {
       console.log(e);
       res.status(500).json({ message: "Ошибка вывода одного чата" });

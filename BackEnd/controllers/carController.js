@@ -27,9 +27,13 @@ class CarController {
       const limit = Number(req.query.limit) || 12;
       const page = Number(req.query.page) || 1;
       const skip = (page - 1) * limit;
-      const { brand, model, driveType, bodyType, fuelType, price, yearFrom, yearTo, compilation } = req.query;
+      const { brand, model, driveType, bodyType, fuelType, price, yearFrom, yearTo, compilation, available } = req.query;
 
       const filter = {};
+
+      if(available === "true") {
+        filter.available = true
+      }
 
       if (bodyType) filter.bodyType = bodyType;
 
@@ -84,6 +88,7 @@ class CarController {
         fuelType,
         color,
         price,
+        description,
       } = req.body;
 
       const userId = req.user.id;
@@ -111,6 +116,7 @@ class CarController {
         fuelType,
         color,
         price,
+        description,
         images: newImages,
         sellerId: userId,
       });
@@ -176,6 +182,7 @@ class CarController {
         fuelType,
         color,
         price,
+        description
       } = req.body;
 
       const car = await Car.findByIdAndUpdate(
@@ -194,6 +201,7 @@ class CarController {
           fuelType,
           color,
           price,
+          description
         }
       );
 

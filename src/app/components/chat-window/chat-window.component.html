@@ -1,5 +1,46 @@
 <div class="chat-container">
-  <div class="chat-header">{{ chat?.advertisementId?.brand }} {{ chat?.advertisementId?.model }}</div>
+  <div class="chat-header">
+    <div class="car-brand-model" (click)="goToCar(chat?.advertisementId?._id)">
+      <div
+        class="car-image"
+        [style.backgroundImage]="
+          'url(' + chat?.advertisementId?.images[0] + ')'
+        "
+      ></div>
+      <div class="car-title">
+        <h2>
+          {{ chat?.advertisementId?.brand }} {{ chat?.advertisementId?.model }}
+        </h2>
+        <div class="car-year-price">
+          <span class="year">{{ chat?.advertisementId?.year }} год</span>
+          <span class="price">{{ formatPrice(chat?.advertisementId?.price) }} ₽</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="interlocutor-info" *ngIf="sellerInfo._id" (click)="goToProfile(currentUserId === chat?.sellerId ? buyerInfo?._id : sellerInfo?._id)">
+      <div
+        class="user-avatar"
+        [style.background-image]="
+          'url(' +
+          getSafeAvatarUrl(
+            currentUserId === chat?.sellerId
+              ? buyerInfo?.avatar
+              : sellerInfo?.avatar
+          ) +
+          ')'
+        "
+      ></div>
+      <div class="user-online" *ngIf="isUserOnline"></div>
+      <span class="user-name">
+        {{
+          currentUserId === chat?.sellerId
+            ? buyerInfo?.name + " " + buyerInfo?.surname
+            : sellerInfo?.name + " " + sellerInfo?.surname
+        }}
+      </span>
+    </div>
+  </div>
 
   <div class="messages-container" #messagesContainer>
     <div *ngFor="let message of chatMessages" class="message-wrapper">
@@ -32,7 +73,6 @@
       placeholder="Введите сообщение..."
       class="message-input"
     />
-
     <button (click)="sendMessage()" class="send-button">Отправить</button>
   </div>
 </div>

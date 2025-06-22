@@ -28,6 +28,19 @@ class reviewController {
       res.status(500).json({ message: "Ошибка сервера" });
     }
   }
+
+  async getUserReviews(req, res) {
+    try {
+      const id = req.params.id
+
+      const reviews = await Review.find({ seller: id })
+
+      res.status(200).json(reviews)
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: "Ошибка сервера" })
+    }
+  }
 }
 
 module.exports = new reviewController();

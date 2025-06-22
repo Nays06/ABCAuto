@@ -1,4 +1,10 @@
-import { Component, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
@@ -6,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SocketService } from '../../services/socket.service';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-chat-window',
@@ -18,12 +24,14 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
   chatId: any = '';
   chat: any = {};
   chatMessages: any = [];
-  sellerInfo: any = {}
-  buyerInfo: any = {}
+  sellerInfo: any = {};
+  buyerInfo: any = {};
+  isUserOnline: boolean = false;
   message = '';
   hovered: boolean = false;
   currentUserId: string = '';
   private destroy$ = new Subject<void>();
+  private statusSubscription!: Subscription;
 
   @ViewChild('messagesContainer')
   private messagesContainer!: ElementRef<HTMLDivElement>;
@@ -35,7 +43,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private toast: HotToastService
-  ) {}
+  ) {
+    this.socketService.requestAllUserStatuses();
+  }
 
   ngOnInit(): void {
     this.route.paramMap
@@ -101,14 +111,26 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
       .subscribe(
         (res: any) => {
           this.chat = res.chatInfo;
-          console.log(this.chat);
-          
           this.chatMessages = res.chatMessages;
-          this.sellerInfo = res.sellerInfo
-          this.buyerInfo = res.buyerInfo
-          console.log(res);
+          this.sellerInfo = res.sellerInfo;
+          this.buyerInfo = res.buyerInfo;
+          console.log('res', res);
           this.scrollToBottom(false);
           this.markMessagesAsRead();
+
+          this.statusSubscription = this.socketService
+            .getUserStatus(this.currentUserId === this.chat?.sellerId ? this.buyerInfo?._id : this.sellerInfo?._id)
+            .subscribe({
+              next: (isOnline) => {
+                console.log('Статус пользователя:', isOnline);
+                this.isUserOnline = isOnline;
+              },
+              error: (err) => {
+                console.error('Ошибка получения статуса:', err);
+              },
+            });
+
+          this.socketService.requestUserStatus(this.currentUserId === this.chat?.sellerId ? this.buyerInfo?._id : this.sellerInfo?._id);
         },
         (err: any) => {
           console.error(err);
@@ -151,7 +173,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendMessage() {    
+  sendMessage() {
     if (this.message.trim()) {
       const messageData = {
         chatId: this.chat._id,
@@ -160,12 +182,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
           this.currentUserId === this.chat.sellerId
             ? this.chat.buyerId
             : this.chat.sellerId,
-        senderName: this.currentUserId === this.sellerInfo._id ? this.sellerInfo.name : this.buyerInfo.name,
-        senderSurName: this.currentUserId === this.sellerInfo._id ? this.sellerInfo.surname : this.buyerInfo.surname,
+        senderName:
+          this.currentUserId === this.sellerInfo._id
+            ? this.sellerInfo.name
+            : this.buyerInfo.name,
+        senderSurName:
+          this.currentUserId === this.sellerInfo._id
+            ? this.sellerInfo.surname
+            : this.buyerInfo.surname,
         content: this.message.trim(),
       };
-      console.log("messageData", messageData);
-      
+      console.log('messageData', messageData);
 
       this.chatService
         .sendMessageWithChatId(messageData)
@@ -181,6 +208,25 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
           }
         );
     }
+  }
+
+  goToCar(id: string) {
+    this.router.navigate(['/car', id]);
+  }
+
+  goToProfile(id: string) {
+    this.router.navigate(['/profile', id]);
+  }
+
+  getSafeAvatarUrl(avatarPath: string): string {
+    const normalizedPath = avatarPath?.replace(/\\/g, '/');
+
+    const baseUrl = 'http://localhost:5555';
+    return `${baseUrl}/${normalizedPath}`.replace(/([^:]\/)\/+/g, '$1');
+  }
+
+  formatPrice(price: number): string {
+    return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 
   formateTime(time: any) {
@@ -220,5 +266,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
 
     this.destroy$.next();
     this.destroy$.complete();
+    this.statusSubscription.unsubscribe();
   }
 }

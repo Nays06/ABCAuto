@@ -3,10 +3,11 @@ import { VideoSliderComponent } from '../../components/video-slider/video-slider
 import { CarsService } from '../../services/cars.service';
 import { CarCardComponent } from '../../components/car-card/car-card.component';
 import { FilterComponent } from '../../components/filter/filter.component';
-import { NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { FavoritesService } from '../../services/favorites.service';
 import { CarsEmptyComponent } from "../../components/cars-empty/cars-empty.component";
 import { Router } from '@angular/router';
+import { PostsService } from '../../services/posts.service';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +39,7 @@ export class HomeComponent {
       compilation: 'city',
     },
   ];
+  posts: any = []
   allFavorites = [];
 
   private _carService: CarsService;
@@ -45,7 +47,8 @@ export class HomeComponent {
   constructor(
     CarsService: CarsService,
     private favoriteService: FavoritesService,
-    private router: Router
+    private router: Router,
+    private postsService: PostsService
   ) {
     this._carService = CarsService;
   }
@@ -61,6 +64,12 @@ export class HomeComponent {
         console.error(err);
       }
     );
+
+    this.postsService.getPosts().subscribe(
+      (res: any) => {
+        this.posts = res
+      }
+    )
   }
 
   onFilterChanged(filterCars: any) {
@@ -82,7 +91,7 @@ export class HomeComponent {
   }
 
   getCars() {
-    this._carService.getCars().subscribe(
+    this._carService.getCars("?available=true").subscribe(
       (response: any) => {
         this.isLoading = true
         this.cars = response;
@@ -92,5 +101,27 @@ export class HomeComponent {
         console.log(error);
       }
     );
+  }
+
+  formatDate(dateString: Date): string {
+    const monthNames = [
+      'янв',
+      'фев',
+      'мар',
+      'апр',
+      'мая',
+      'июн',
+      'июл',
+      'авг',
+      'сен',
+      'окт',
+      'ноя',
+      'дек',
+    ];
+    const date = new Date(dateString)
+    const mskDate = new Date(date.getTime());
+    // const inputDate = this.getMskDateWithoutTime(mskDate);
+    // date = new Date(date.getTime() + 3 * 60 * 60 * 1000)
+    return `${mskDate.getDate()} ${monthNames[mskDate.getMonth()]} ${mskDate.getFullYear()}`;
   }
 }

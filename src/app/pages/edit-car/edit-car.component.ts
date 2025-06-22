@@ -181,6 +181,7 @@ export class EditCarComponent {
       bodyType: [''],
       color: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
+      description: ['', Validators.required],
     });
   }
 

@@ -1,0 +1,237 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Админ-панель</h1>
+  </div>
+
+  <div class="admin-tabs">
+    <div class="tab-buttons">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'posts'"
+        (click)="switchTab('posts')"
+      >
+        Посты
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'cars'"
+        (click)="switchTab('cars')"
+      >
+        Объявления
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'users'"
+        (click)="switchTab('users')"
+      >
+        Пользователи
+      </button>
+    </div>
+
+    <div class="tab-content" [class.active]="activeTab === 'posts'">
+      <section class="admin-section">
+        <h2>Добавление нового поста</h2>
+        <form class="admin-form">
+          <div class="form-group">
+            <label for="post-title">Заголовок поста</label>
+            <input
+              type="text"
+              id="post-title"
+              class="form-control"
+              placeholder="Введите заголовок"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="postTitle"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="post-text">Текст поста</label>
+            <textarea
+              id="post-text"
+              class="form-control"
+              rows="5"
+              placeholder="Введите текст поста"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="postText"
+            ></textarea>
+          </div>
+
+          <!-- <div class="form-group">
+            <label for="post-category">Категория</label>
+            <select id="post-category" class="form-control">
+              <option value="news">Новости</option>
+              <option value="tips">Советы</option>
+              <option value="reviews">Обзоры</option>
+            </select>
+          </div> -->
+
+          <div class="form-group">
+            <label for="file-upload">Изображение</label>
+            <div class="file-upload">
+              <input
+                type="file"
+                id="file-upload"
+                accept="image/jpeg, image/jpg, image/png"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" (click)="submitPost()">
+            Опубликовать пост
+          </button>
+        </form>
+      </section>
+
+      <section class="admin-section">
+        <h2>Список постов</h2>
+        <div class="posts-list" *ngIf="posts.length">
+          <div class="post-item" *ngFor="let post of posts">
+            <div>
+                <div class="post-img">
+                    <img [src]="`http://localhost:5555/${post.img}`" [alt]="post.title">
+                </div>
+            </div>
+
+            <div>
+              <div class="post-header">
+                <h3>{{ post.title }}</h3>
+              </div>
+              <div class="post-content">
+                <p>{{ post.text }}</p>
+              </div>
+              <div class="post-actions">
+                <button class="action-btn edit-btn" (click)="editPost()">Редактировать</button>
+                <button class="action-btn delete-btn" (click)="deletePost(post._id)">Удалить</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="posts-empty" *ngIf="!posts.length">Постов нету</div>
+      </section>
+    </div>
+
+    <div class="tab-content" [class.active]="activeTab === 'cars'">
+      <section class="admin-section">
+        <h2>Фильтр объявлений</h2>
+        <div class="filter-section">
+          <div class="filter-group">
+            <label for="car-brand">Марка</label>
+            <input
+              type="text"
+              id="car-brand"
+              class="form-control"
+              placeholder="Любая марка"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label for="car-model">Модель</label>
+            <input
+              type="text"
+              id="car-model"
+              class="form-control"
+              placeholder="Любая модель"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label for="car-year">Год</label>
+            <select id="car-year" class="form-control">
+              <option value="any">Любой год</option>
+              <option *ngFor="let year of [2023, 2022, 2021]" [value]="year">
+                {{ year }}
+              </option>
+            </select>
+          </div>
+
+          <button class="filter-btn">Применить фильтр</button>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Список объявлений</h2>
+        <div class="cars-list">
+          <div class="car-card" *ngFor="let car of cars">
+            <div class="car-header">
+              <div class="car-img">
+                <img [src]="car.images[0].slice(0, car.images[0].indexOf('\\')) === 'uploads' ? `http://localhost:5555/${car.images[0]}` : car.images[0]" [alt]="`${car.brand} ${car.model}`">
+              </div>
+              <div class="car-title">
+                <h3>{{ car.brand }} {{ car.model }} {{ car.year }}</h3>
+                <p class="car-price">Цена: {{ formatPrice(car.price) }} руб.</p>
+              </div>
+            </div>
+            <div class="car-details">
+              <p><strong>Пробег:</strong> {{ formatPrice(car.mileage) }} км</p>
+              <p><strong>Двигатель:</strong>{{ car.engine }} / {{ car.fuelType }}</p>
+              <p><strong>КПП:</strong>{{ car.transmission }}</p>
+              <p>
+                <strong>Статус:</strong>
+                <span class="status-active" *ngIf="car.available">Активно</span>
+                <span class="status-notactive" *ngIf="!car.available">Не Активно</span>
+              </p>
+            </div>
+            <div class="car-actions">
+              <button class="action-btn edit-btn" (click)="editCar(car._id)">Редактировать</button>
+              <button class="action-btn delete-btn" (click)="deleteCar(car._id)">Удалить</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-content" [class.active]="activeTab === 'users'">
+      <section class="admin-section">
+        <h2>Поиск пользователей</h2>
+        <div class="search-section">
+          <div class="search-group">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Поиск по email или имени"
+            />
+            <button class="search-btn">🔍</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h2>Список пользователей</h2>
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Имя</th>
+              <th>Email</th>
+              <th>Роль</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of [1, 2, 3]">
+              <td>{{ user }}</td>
+              <td>Пользователь {{ user }}</td>
+              <td>{{ "user" + user + "@example.com" }}</td>
+              <td>
+                <select class="role-select">
+                  <option value="admin" [selected]="user === 1">
+                    Администратор
+                  </option>
+                  <option value="user" [selected]="user !== 1">
+                    Пользователь
+                  </option>
+                  <option value="moderator">Модератор</option>
+                </select>
+              </td>
+              <td>
+                <button class="icon-btn edit-icon">✏️</button>
+                <button class="icon-btn delete-icon">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+</div>

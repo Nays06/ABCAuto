@@ -219,6 +219,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  cursor: pointer;
+  position: relative;
 }
 
 .seller-avatar {
@@ -226,6 +228,16 @@
   height: 60px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.seller-online {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #02d15c;
+  position: absolute;
+  bottom: 0;
+  left: 40px;
 }
 
 .seller-name {

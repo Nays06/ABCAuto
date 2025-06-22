@@ -57,7 +57,7 @@ export class FilterComponent {
   }
 
   log() {
-    this._carService.getCars(this.filterQuery).subscribe(
+    this._carService.getCars(this.filterQuery + "available=true").subscribe(
       (res: any) => {
         this.cars = res;
         this.filteredCars.emit({ cars: this.cars, query: this.filterQuery });
@@ -118,7 +118,7 @@ export class FilterComponent {
           this.filterValues.priceRange = { min, max };
         }
 
-        this._carService.getCars(queryParams + "&limit=24").subscribe(
+        this._carService.getCars(queryParams + "&limit=24&available=true").subscribe(
           (res: any) => {
             this.cars = res;
             this.filteredCars.emit({ cars: this.cars, query: queryParams });

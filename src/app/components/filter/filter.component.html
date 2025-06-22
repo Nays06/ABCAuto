@@ -15,11 +15,11 @@
         <div>
             <div>
                 <span>От</span>
-                <input type="number" [(ngModel)]="filterValues.priceRange.min" (input)="applyFilter()">
+                <input type="number" [(ngModel)]="filterValues.priceRange.min" placeholder="0" (input)="applyFilter()">
             </div>
             <div>
                 <span>До</span>
-                <input type="number" [(ngModel)]="filterValues.priceRange.max" (input)="applyFilter()">
+                <input type="number" [(ngModel)]="filterValues.priceRange.max" placeholder="1000000" (input)="applyFilter()">
             </div>
         </div>
     </div>

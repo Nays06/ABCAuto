@@ -4,9 +4,10 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const Car = require("../models/Car");
+const Review = require("../models/Review");
 require("dotenv").config();
 const secret = process.env.JWT_SECRET;
-const mailer = require("../nodemailer")
+const mailer = require("../nodemailer");
 
 const generateAccessToken = (id) => {
   const payload = {
@@ -55,7 +56,6 @@ class authController {
         user.avatar = "static/avatar/default-avatar.jpeg";
       }
 
-      
       const message = {
         to: email,
         subject: "Подтверждение электронной почты",
@@ -64,7 +64,7 @@ class authController {
         login: ${email} , 
         password: ${password}`,
       };
-      mailer(message)
+      mailer(message);
 
       const token = generateAccessToken(user._id.toString());
       const refreshToken = generateRefreshToken(user._id);
@@ -79,9 +79,9 @@ class authController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
       });
-      
+
       return res
-      .status(200)
+        .status(200)
         .json({ message: "Регистрация прошла успешно", token });
     } catch (e) {
       console.log(e);
@@ -144,23 +144,32 @@ class authController {
         .sort({ _id: -1 })
         .limit(12);
 
-      if (user) {
-        res.status(200).json({
-          message: "Успешно!",
-          data: {
-            name: user.name,
-            surname: user.surname,
-            email: user.email,
-            avatar: user.avatar,
-            registrationDate: user.registrationDate,
-            adsCount,
-            ads,
-            reviewsCount: user?.reviews?.length,
-          },
-        });
-      } else {
-        res.status(400).json({ message: "Пользователь не найден!" });
+      const reviews = await Review.find({ seller: user._id });
+      const reviewsCount = reviews.length;
+
+      let averageRating = 0;
+      if (reviewsCount > 0) {
+        const totalRating = reviews.reduce((sum, review) => {
+          return sum + (review.rating || 0);
+        }, 0);
+        averageRating = parseFloat((totalRating / reviewsCount).toFixed(1));
       }
+
+      res.status(200).json({
+        message: "Успешно!",
+        data: {
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          avatar: user.avatar,
+          registrationDate: user.registrationDate,
+          adsCount,
+          ads,
+          reviewsCount,
+          reviews,
+          rating: averageRating,
+        },
+      });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Ошибка данных профиля" });
@@ -186,6 +195,17 @@ class authController {
         .sort({ _id: -1 })
         .limit(12);
 
+      const reviews = await Review.find({ seller: user._id });
+      const reviewsCount = reviews.length;
+
+      let averageRating = 0;
+      if (reviewsCount > 0) {
+        const totalRating = reviews.reduce((sum, review) => {
+          return sum + (review.rating || 0);
+        }, 0);
+        averageRating = parseFloat((totalRating / reviewsCount).toFixed(1));
+      }
+
       if (user) {
         res.status(200).json({
           message: "Успешно!",
@@ -197,7 +217,9 @@ class authController {
             registrationDate: user.registrationDate,
             adsCount,
             ads,
-            reviewsCount: user?.reviews?.length,
+            reviewsCount,
+            reviews,
+            rating: averageRating,
           },
         });
       } else {
@@ -296,27 +318,27 @@ class authController {
 
   async getBalance(req, res) {
     try {
-      const user = await User.findById(req.user.id)
+      const user = await User.findById(req.user.id);
 
-      return res.status(200).json(user.balance)
-    } catch(err) {
+      return res.status(200).json(user.balance);
+    } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Ошибка вывода баланса" })
+      res.status(500).json({ message: "Ошибка вывода баланса" });
     }
   }
 
   async setBalance(req, res) {
     try {
-      const { balance } = req.body
+      const { balance } = req.body;
 
       await User.findByIdAndUpdate(req.user.id, {
-        balance
-      })
+        balance,
+      });
 
-      return res.status(200).json({ message: "Баланс успешно изменен" })
+      return res.status(200).json({ message: "Баланс успешно изменен" });
     } catch (err) {
-      console.log(err)
-      res.status(500).json({ message: "Error balance editing" })
+      console.log(err);
+      res.status(500).json({ message: "Error balance editing" });
     }
   }
 }

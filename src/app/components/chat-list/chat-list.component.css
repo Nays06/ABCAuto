@@ -43,10 +43,31 @@
       border-radius: 0 3px 3px 0;
     }
   }
+
+  &.current {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 12px rgba(var(--primary-color-rgb), 0.2);
+
+    .sender-name,
+    .car-title,
+    .last-message,
+    .message-date,
+    .message-additional svg {
+      color: white !important;
+    }
+
+    .point {
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+  }
 }
 
 .chat-item:hover {
   background-color: #f1f1f1;
+
+  &.current:hover {
+    background-color: var(--primary-color-hover);
+  }
 }
 
 .images {
@@ -132,6 +153,12 @@
   position: absolute;
   top: 40%;
   right: 15px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: var(--primary-color);
+  }
 }
 
 .message-date {

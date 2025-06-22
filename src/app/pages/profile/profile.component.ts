@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FavoritesService } from '../../services/favorites.service';
 import { Subscription } from 'rxjs';
 import { SocketService } from '../../services/socket.service';
+import { ReviewService } from '../../services/review.service';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +18,9 @@ import { SocketService } from '../../services/socket.service';
 export class ProfileComponent {
   user: any = {};
   allFavorites = [];
+  currentUserId: any = ""
   otherUserId: any = '';
+  reviews: any = []
   isUserOnline: boolean = false;
   private statusSubscription!: Subscription;
 
@@ -26,7 +29,8 @@ export class ProfileComponent {
     private router: Router,
     private route: ActivatedRoute,
     private favoriteService: FavoritesService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private reviewsService: ReviewService,
   ) {
     this.socketService.requestAllUserStatuses();
   }
@@ -39,10 +43,32 @@ export class ProfileComponent {
     this.otherUserId = this.route.snapshot.paramMap.get('id');
 
     this.authService.getUserID().subscribe((res: any) => {
+      this.currentUserId = res.id
       if (res.id === this.otherUserId) {
         this.router.navigate(['/profile']);
       }
+      if(!this.otherUserId) {
+      this.reviewsService.getUserReviews(this.currentUserId).subscribe(
+        (res: any) => {
+          console.log(res);
+        },
+        (err: any) => {
+          console.error(err);
+        }
+      )
+    }
     });
+
+    if(this.otherUserId) {
+      this.reviewsService.getUserReviews(this.otherUserId).subscribe(
+        (res: any) => {
+          console.log(res);
+        },
+        (err: any) => {
+          console.error(err);
+        }
+      )
+    }
 
     this.statusSubscription = this.socketService
       .getUserStatus(this.otherUserId)

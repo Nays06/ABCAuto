@@ -12,4 +12,8 @@ export class ReviewService {
   addReview(review: object) {
     return this.http.post(`${this.apiUrl}/`, review)
   }
+
+  getUserReviews(id: string) {
+    return this.http.get(`${this.apiUrl}/${id}`)
+  }
 }

@@ -62,7 +62,7 @@ export class CompilationComponent {
       }
 
       await this.carService
-        .getCars(`?compilation=${this.type}&limit=52`)
+        .getCars(`?compilation=${this.type}&limit=52&available=true`)
         .subscribe(
           (res: any) => {
             this.isLoading = true;

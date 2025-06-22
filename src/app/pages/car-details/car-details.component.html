@@ -94,26 +94,21 @@
       <div class="info-section" *ngIf="car.sellerId">
         <h2>Описание</h2>
         <div class="description">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis vitae
-          numquam ea aspernatur illo, impedit architecto ab iure exercitationem
-          pariatur et dolor ut voluptates ipsam sed minima! Obcaecati, fugit
-          voluptatibus. Suscipit adipisci dolores nulla nesciunt illum explicabo
-          labore architecto dignissimos ut, vero iusto et, vitae, perferendis
-          deserunt itaque perspiciatis dolore obcaecati eius. Quasi esse sed
-          ullam tempore nobis sint molestiae!
+          {{ car.description }}
         </div>
       </div>
 
       <div class="info-section" *ngIf="car.sellerId && seller">
         <h2>Информация о продавце</h2>
         <div class="seller-info">
-          <div class="seller-main-info">
+          <div class="seller-main-info" (click)="goToProfile(seller._id)">
             <img
               *ngIf="seller.avatar"
               [src]="`http://localhost:5555/${seller.avatar}`"
               alt="Аватар продавца"
               class="seller-avatar"
             />
+            <div class="seller-online" *ngIf="isSellerOnline"></div>
             <div class="seller-name">
               <span class="info-value"
                 >{{ seller.name }} {{ seller.surname }}</span

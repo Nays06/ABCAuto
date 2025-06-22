@@ -6,6 +6,7 @@
       chat.lastMessage.senderId._id !== currentUserId &&
       !chat.lastMessage.isRead
     "
+    [class.current]="currentChatId === chat._id"
     (click)="openChat(chat._id)"
   >
     <div class="images">
@@ -57,7 +58,6 @@
               xmlns="http://www.w3.org/2000/svg"
               class="icon-icon-JUE8Z status-icon-root-kGiuI"
               data-marker="icon/messenger-statusDelivered"
-              style="width: 16px; height: 16px; color: var(--primary-color)"
             >
               <path
                 fill-rule="evenodd"
@@ -73,7 +73,6 @@
               xmlns="http://www.w3.org/2000/svg"
               class="icon-icon-JUE8Z status-icon-root-kGiuI"
               data-marker="icon/messenger-statusRead"
-              style="width: 16px; height: 16px; color: var(--primary-color)"
             >
               <path
                 fill-rule="evenodd"
